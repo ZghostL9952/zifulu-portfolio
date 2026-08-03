@@ -39,7 +39,16 @@ const studies = (await getCollection('work', ({ data }) => !data.draft)).sort(
     </div>
   </section>
 
-  <section class="mx-auto mt-16 max-w-4xl px-6" aria-labelledby="work-heading">
+  {/*
+    id="work" is the jump target for the nav's /#work link and the "All work"
+    link on case studies. scroll-mt keeps the heading off the viewport edge on
+    arrival instead of butting against it.
+  */}
+  <section
+    id="work"
+    class="mx-auto mt-16 max-w-4xl scroll-mt-8 px-6"
+    aria-labelledby="work-heading"
+  >
     <h2 id="work-heading" class="m-0 text-2xl">Selected work</h2>
 
     <ul class="m-0 mt-8 list-none border-t border-line p-0">
