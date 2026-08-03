@@ -11,6 +11,7 @@ tools:
   - Figma
   - Excel
   - Claude
+logo: ../../assets/advisrlab/advisrlab-logo.png
 order: 1
 draft: false
 ---
