@@ -106,9 +106,21 @@ const facts = [
     font-style: italic;
   }
 
+  /* `margin-inline: auto` centers any image narrower than the column. The wide
+     screenshots and charts already fill it, so this only shows up on small
+     diagrams. */
   .prose :global(img) {
+    display: block;
     max-width: 100%;
     height: auto;
-    margin: 1.5rem 0;
+    margin: 1.5rem auto;
+  }
+
+  /* The two-layer prompt diagram is a small portrait graphic -- at full column
+     width it reads as an oversized placeholder. Astro keeps the source basename
+     as the prefix of the hashed build filename (two-prompt-layers.NAiIHzgv…webp),
+     which is what lets this match a specific image without an MDX dependency. */
+  .prose :global(img[src*='two-prompt-layers']) {
+    max-width: 280px;
   }
 </style>
