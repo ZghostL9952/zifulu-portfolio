@@ -23,7 +23,7 @@ It's wrong. The student registers, finds out in week two, and loses a quarter.
 
 That failure was the reason this project was hard. Not the answering — the knowing when not to.
 
-\[escalation-exmp.png\]
+![AdvisrLab running in the UW Purple AI interface. A student asks whether they can take INFO 340 without finishing INFO 201, mentioning a community college web dev class. Rather than answering yes or no, the assistant replies that this depends on the student's transcript and needs a real person to check, links to the iSchool advising support page, and lists what to bring to the appointment.](../../assets/advisrlab/escalation-exmp.png)
 
 **I led a team of 5 building an AI advising assistant for Informatics students on the UW’s Purple AI platform.** I ran the research, designed the prompt architecture, and set the roadmap.
 
@@ -37,7 +37,7 @@ We surveyed 29 students *expecting* to hear that advising was too slow.
 
 The real complaint was that the answers didn't agree with each other — **31%** said information was scattered across too many sites, and **19%** said they'd gotten conflicting answers from different sources. Half the respondents had an information-trust problem, not a speed problem.
 
-\[Q6.png\]
+![Bar chart. Q6: What is the biggest challenge you face with the current advising system? Of 26 responses — information is hard to find across different websites, 8; advisors are difficult to schedule with, 7; receiving conflicting information from different sources, 5; wait time for response is too long, 4; other, 2.](../../assets/advisrlab/Q6.png)
 
 ### Students already had AI. It wasn't working.
 
@@ -59,7 +59,7 @@ We asked directly. The answers pointed straight at two features:
 
 An "approved by advisors" badge came last at 46%. Students didn't want to be told the tool was credible. They wanted to verify it themselves.
 
-\[Q13.png\]
+![Bar chart. Q13: Which of the following would make you trust an advising chatbot the most? Of 24 responses — direct links to official iSchool sources (citations), 17; ability to escalate to a human if the bot fails, 15; transparency, meaning the bot admits when it doesn't know, 12; an "Approved by Advisors" badge, 11; other, 1.](../../assets/advisrlab/Q13.png)
 
 ### The finding that changed what we were building
 
@@ -79,17 +79,17 @@ That set the bar for tone. An assistant that answered basic questions briskly, o
 
 **Two prompt layers, not one.** Advising facts in one, voice in the other. A single prompt makes them fight — every tone fix risks breaking a fact. Split, the team could update policy without retesting how it talked.
 
-\[two-prompt-layers.png\]
+![Diagram of two stacked prompt layers. The Agent Prompt holds AdvisrLab's identity, tone, and behavior rules. Below it, the Platform Prompt holds org-wide rules: confidence levels, escalation, and citation format.](../../assets/advisrlab/two-prompt-layers.png)
 
 **Escalate on low confidence.** 63% named this as a trust factor, but drawing the line was the hardest call on the project. Escalate too often and it's a glorified FAQ. Too rarely and a student registers on a wrong answer and loses a quarter. .
 
-\[confident-escalation.png\]
+![Flowchart. A question comes in and reaches a decision point labeled "Confident?", which branches two ways: to an answer, or to an escalation message.](../../assets/advisrlab/confident-escalation.png)
 
 ## What happened
 
 Six user testing sessions produced four failure modes, each with a matching design requirement. That list became the build spec.
 
-\[user-testing-chart.png\]
+![Two-column table pairing each failure mode with the design requirement it produced. Reversed itself when a student pushed back, needs rules that hold a correct answer under pressure. Answered confidently outside official docs, needs a confidence threshold and escalation. No path to a human when it failed, needs advisor booking and an email draft in the handoff. Answers ran long and generic, needs a voice layer tuned for concise, plain language.](../../assets/advisrlab/user-testing-chart.png)
 
 **Citations were the only feature students named unprompted in both rounds.** 71% of survey respondents ranked them the top trust factor, and 5 of 7 testers brought them up without being asked. That consistency is why citations became a hard requirement rather than a nice-to-have.
 
