@@ -1,0 +1,44 @@
+---
+const path = Astro.url.pathname;
+
+const links = [
+  { href: '/#work', label: 'Work', match: (p: string) => p === '/' || p.startsWith('/work') },
+  { href: '/about', label: 'About', match: (p: string) => p.startsWith('/about') },
+];
+---
+
+<header class="border-b border-line">
+  <div class="mx-auto max-w-4xl px-6 py-5 flex items-baseline justify-between gap-6">
+    <a
+      href="/"
+      class="font-display text-xl font-semibold text-ink no-underline"
+      aria-label="Zifu Lu, home"
+    >
+      Zifu Lu
+    </a>
+
+    <nav aria-label="Main">
+      <ul class="flex items-baseline gap-6 list-none m-0 p-0">
+        {
+          links.map((link) => {
+            const isCurrent = link.match(path);
+            return (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  class:list={[
+                    'text-[0.9375rem] no-underline hover:underline underline-offset-4',
+                    isCurrent ? 'text-ink font-medium' : 'text-ink-muted',
+                  ]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

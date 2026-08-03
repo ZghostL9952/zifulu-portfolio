@@ -1,0 +1,21 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line mt-24">
+  <div
+    class="mx-auto max-w-4xl px-6 py-8 flex flex-wrap items-baseline justify-between gap-4 text-[0.9375rem] text-ink-muted"
+  >
+    <p class="m-0">&copy; {year} Zifu Lu</p>
+
+    <ul class="flex flex-wrap gap-6 list-none m-0 p-0">
+      <li>
+        <a href="mailto:zlu9952@uw.edu" class="underline underline-offset-4">zlu9952@uw.edu</a>
+      </li>
+      <li>
+        {/* TODO: replace with the real LinkedIn URL. */}
+        <a href="https://www.linkedin.com/" class="underline underline-offset-4">LinkedIn</a>
+      </li>
+    </ul>
+  </div>
+</footer>

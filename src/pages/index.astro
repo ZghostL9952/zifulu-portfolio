@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const studies = (await getCollection('work', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout title="Zifu Lu — UX & Product Design">
+  <section class="mx-auto max-w-4xl px-6 pt-16 pb-12">
+    <h1 class="text-4xl sm:text-5xl m-0 max-w-2xl">
+      I design tools people can actually check.
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-ink-muted">
+      Informatics and Psychology senior at the University of Washington, focused on UX
+      research and product design.
+    </p>
+  </section>
+
+  {/* The illustrated bookshelf mounts here. Scaffold only -- nothing yet. */}
+
+  <section class="mx-auto max-w-4xl px-6" aria-labelledby="work-heading">
+    <h2 id="work-heading" class="text-2xl m-0">Selected work</h2>
+
+    <ul class="mt-8 list-none m-0 p-0 border-t border-line">
+      {
+        studies.map((study) => (
+          <li class="border-b border-line">
+            <a href={`/work/${study.id}`} class="group block py-7 no-underline">
+              <h3 class="text-xl m-0 text-ink group-hover:underline underline-offset-4">
+                {study.data.title}
+              </h3>
+              <p class="mt-2 max-w-xl text-ink-muted m-0">{study.data.summary}</p>
+              <p class="mt-3 text-[0.875rem] text-ink-muted m-0">
+                {study.data.role} · {study.data.timeline}
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
