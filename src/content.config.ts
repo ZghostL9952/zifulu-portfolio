@@ -14,12 +14,14 @@ const work = defineCollection({
     z.object({
       title: z.string(),
       summary: z.string(),
-      role: z.string(),
+      // Rendered as tags, so one entry per role rather than one prose line.
+      role: z.array(z.string()).nonempty(),
       team: z.string().optional(),
       timeline: z.string(),
       tools: z.array(z.string()).default([]),
-      // Project mark, shown beside the title in the homepage list.
-      logo: image().optional(),
+      // Required: every case study carries a thumbnail. A missing or misspelled
+      // path fails the build rather than shipping a hole in the work list.
+      thumbnail: image(),
       // Maps to a hit-shape id in the shelf SVG. Unset until the shelf exists.
       slot: z.string().optional(),
       // Lower sorts first on the homepage.

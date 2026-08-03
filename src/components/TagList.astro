@@ -1,0 +1,25 @@
+---
+interface Props {
+  items: string[];
+  /** Accessible name for the list, e.g. "Roles". */
+  label?: string;
+  class?: string;
+}
+
+const { items, label, class: className } = Astro.props;
+---
+
+{/*
+  Pills on --accent-soft. CLAUDE.md reserves that token for exactly this and
+  hover fills, so tags do not introduce a new color. --accent on --accent-soft
+  measures 7.6:1, comfortably past AA.
+*/}
+<ul class:list={['m-0 flex list-none flex-wrap gap-2 p-0', className]} aria-label={label}>
+  {
+    items.map((item) => (
+      <li class="rounded-full bg-accent-soft px-2.5 py-1 text-[0.875rem] leading-normal text-accent">
+        {item}
+      </li>
+    ))
+  }
+</ul>

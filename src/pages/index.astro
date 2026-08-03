@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TagList from '../components/TagList.astro';
 
 const studies = (await getCollection('work', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order
@@ -45,30 +46,44 @@ const studies = (await getCollection('work', ({ data }) => !data.draft)).sort(
       {
         studies.map((study) => (
           <li class="border-b border-line">
+            {/*
+              Grid rather than flex so the thumbnail column is a fixed track and
+              the text column takes the rest. minmax(0,1fr) lets long words wrap
+              instead of forcing the track wider.
+            */}
             <a
               href={`/work/${study.id}`}
-              class="group flex items-start gap-5 py-7 no-underline"
+              class="group grid grid-cols-[5.5rem_minmax(0,1fr)] items-start gap-5 py-8 no-underline sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-8"
             >
-              {study.data.logo && (
-                /* alt="" on purpose: the project name is right beside it, and
-                   announcing "AdvisrLab" twice is worse than not at all. */
-                <Image
-                  src={study.data.logo}
-                  alt=""
-                  width={128}
-                  height={128}
-                  class="mt-1 h-16 w-16 flex-none rounded-lg"
-                />
-              )}
+              {/*
+                alt="" on purpose: the project name is right beside it, and
+                announcing "AdvisrLab" twice is worse than not at all.
+                A square frame with object-cover means a square mark fills it
+                edge to edge with no crop, while a wider screenshot thumbnail
+                later will center-crop rather than letterbox.
+              */}
+              {/*
+                No explicit width/height: Astro then uses the source's own
+                dimensions. Asking for more than the source has would upscale --
+                wasted bytes and no extra detail. CSS decides display size; the
+                intrinsic attributes are only there to prevent layout shift.
+              */}
+              <Image
+                src={study.data.thumbnail}
+                alt=""
+                class="aspect-square w-full rounded-lg object-cover"
+              />
 
               <div>
                 <h3 class="m-0 text-xl text-ink underline-offset-4 group-hover:underline group-focus-visible:underline">
                   {study.data.title}
                 </h3>
+
                 <p class="m-0 mt-2 max-w-xl text-ink-muted">{study.data.summary}</p>
-                <p class="m-0 mt-3 text-[0.875rem] text-ink-muted">
-                  {study.data.role} · {study.data.timeline}
-                </p>
+
+                <TagList items={study.data.role} label="Roles" class="mt-4" />
+
+                <p class="m-0 mt-3 text-[0.875rem] text-ink-muted">{study.data.timeline}</p>
               </div>
             </a>
           </li>

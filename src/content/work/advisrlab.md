@@ -3,7 +3,11 @@ title: AdvisrLab
 summary: >-
   An AI advising assistant MVP for UW iSchool Informatics students. The hard part
   wasn't teaching it to answer — it was teaching it to stop.
-role: Team Lead – user research, prompt architecture, roadmap
+role:
+  - Team Lead
+  - User research
+  - Prompt architecture
+  - Roadmap
 team: 5 people
 timeline: Jan 2025 – May 2026
 tools:
@@ -11,7 +15,7 @@ tools:
   - Figma
   - Excel
   - Claude
-logo: ../../assets/advisrlab/advisrlab-logo.png
+thumbnail: ../../assets/advisrlab/advisrlab-logo.png
 order: 1
 draft: false
 ---
