@@ -15,7 +15,7 @@ order: 1
 draft: false
 ---
 
-## **A wrong answer costs a quarter**
+## A wrong answer costs a quarter
 
 Scenario: Registration week. A student asks whether they can skip a prerequisite. The assistant says yes, confidently, in clean sentences.
 
@@ -27,7 +27,7 @@ That failure was the reason this project was hard. Not the answering — the kno
 
 **I led a team of 5 building an AI advising assistant for Informatics students on the UW’s Purple AI platform.** I ran the research, designed the prompt architecture, and set the roadmap.
 
-## **What we learned from students initially**
+## What we learned from students initially
 
 ### Wait time wasn’t the problem
 
@@ -73,7 +73,7 @@ Those questions never reached the system at all. They didn't show up as long wai
 
 That set the bar for tone. An assistant that answered basic questions briskly, or made a student feel handled, would fail at the exact moment it mattered most.
 
-## **Decisions**
+## Decisions
 
 **Citations on every factual claim.** The top trust factor, and the direct fix for conflicting information. If two sources disagreed, the assistant linked the official one rather than picking a winner silently.
 
@@ -97,7 +97,7 @@ Six user testing sessions produced four failure modes, each with a matching desi
 
 The project shipped as a specification, not a product: prompt architecture, escalation logic, and handoff documentation for the team taking it forward. Presented to iSchool’s IT team.
 
-## **What I'd change**
+## What I'd change
 
 Six usability participants is enough to find problems, not enough to rank them. The self-correction failure showed up once, clearly — I'd want to know whether it happens on every challenge or only on low-confidence answers before designing the fix.
 
