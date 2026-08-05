@@ -276,6 +276,13 @@ const facts = [
     max-width: 280px;
   }
 
+  /* The old sign-up screen is a phone capture like the ones in the filmstrip
+     below it, so it matches their width instead of filling the column. Same
+     width, not same height -- the source is a taller crop. */
+  .prose :global(img[src*='old-screen']) {
+    width: 11rem;
+  }
+
   /* Filmstrip.
 
      Consecutive image lines in markdown with no blank line between them parse

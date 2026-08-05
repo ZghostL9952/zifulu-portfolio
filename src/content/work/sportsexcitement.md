@@ -5,8 +5,6 @@ summary: >-
   got the longest form.
 role:
   - UX Design Intern
-  - Competitive analysis
-  - Onboarding design
 team: Worked with UX researchers; remote team
 timeline: Mar 2026 – June 2026
 tools:
@@ -54,18 +52,20 @@ We mapped four pathways through each app:
 - **Coach** creating a team on their own
 - **Coach** invited by a league admin
 
-**Three findings mattered.**
+Two findings mattered.
 
-**1. Action-based role assignment already works.** GameChanger doesn't
-ask "are you a coach or an athlete?" It shows "Find an existing team"
-and "Create new." The role comes from the tap. Lowest friction of the
-three, and proof the pattern isn't theoretical.
+### 1. Action-based role assignment already works
 
-**2. Every competitor underserves parents.** GameChanger files them
-under "Fan" with limited access. TeamSnap calls them "Non-player."
-SportsEngine handles them best but still treats them as secondary.
-Parents are the ones paying and organizing, and all three apps treat
-them as an afterthought.
+GameChanger doesn't ask "are you a coach or an athlete?" It shows "Find an
+existing team" and "Create new." The role comes from the tap. Lowest friction
+of the three, and proof the pattern isn't theoretical.
+
+### 2. Every competitor underserves parents
+
+GameChanger files them under "Fan" with limited access. TeamSnap calls them
+"Non-player." SportsEngine handles them best but still treats them as
+secondary. Parents are the ones paying and organizing, and all three apps
+treat them as an afterthought.
 
 ![Three apps, four pathways each. Only one used action-based roles, and none treated parents as primary.](../../assets/sportsexcitement/competitive-analysis.png)
 
