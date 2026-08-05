@@ -4,9 +4,16 @@ const year = new Date().getFullYear();
 
 <footer class="border-t border-line mt-24">
   <div class="mx-auto max-w-4xl px-6 py-8 text-[0.9375rem] text-ink-muted">
-    {/* The invite sits at full --ink so it reads as the point of the footer,
-        with the credit and links stepped back beneath it. */}
-    <p class="m-0 text-ink">Happy to chat about my work and how this portfolio was made!</p>
+    {/* alt="" on the daisy: it is the site mark repeated from the tab icon,
+        decorative here, and naming it would only add noise before the sentence
+        it sits next to. */}
+    {/* No flex-wrap: the sentence is one anonymous flex item, so wrapping the
+        container would drop the whole sentence below the daisy. Without it the
+        text shrinks and wraps internally, keeping the daisy alongside. */}
+    <p class="m-0 flex items-center justify-center gap-2 text-center">
+      <img src="/favicon.svg" alt="" width="22" height="22" class="flex-none" />
+      Happy to chat about my work and how this portfolio was made!
+    </p>
 
     <div class="mt-5 flex flex-wrap items-baseline justify-between gap-4">
       <p class="m-0">&copy; {year} Zifu Lu</p>
