@@ -275,6 +275,107 @@ const facts = [
   .prose :global(img[src*='two-prompt-layers']) {
     max-width: 280px;
   }
+
+  /* Filmstrip.
+
+     Consecutive image lines in markdown with no blank line between them parse
+     into ONE paragraph. That is the whole trick: a paragraph holding more than
+     one image is a sequence, so it lays out as a horizontal strip. Writing the
+     images normally in the .md keeps them in Astro's optimizer. */
+  .prose :global(p:has(img + img)) {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    margin: 1.75rem 0;
+    padding-bottom: 0.75rem;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+  }
+
+  .prose :global(p:has(img + img) img) {
+    flex: none;
+    width: 11rem;
+    max-width: none;
+    margin: 0;
+    border-radius: 10px;
+    scroll-snap-align: start;
+  }
+
+  /* The user-flow export is 8608px wide. Fitted to the text column it would be
+     about 225px tall and completely unreadable, so it keeps a legible height
+     and scrolls sideways instead. The script below makes the region focusable
+     so it is reachable without a mouse. */
+  .prose :global(p:has(> img[src*='user-flow'])) {
+    overflow-x: auto;
+    margin: 1.75rem 0;
+    padding-bottom: 0.75rem;
+    overscroll-behavior-x: contain;
+  }
+
+  .prose :global(img[src*='user-flow']) {
+    height: 26rem;
+    width: auto;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Any scrollable row that the script made focusable shows the standard ring. */
+  .prose :global(p[tabindex]:focus-visible) {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  /* Video, for screen recordings. Portrait phone capture, so it is capped and
+     centred rather than filling the column. No autoplay -- it never moves until
+     asked, which is also what keeps it safe under reduced motion. */
+  .prose :global(figure) {
+    margin: 2.25rem 0;
+  }
+
+  .prose :global(figure video) {
+    display: block;
+    width: 100%;
+    max-width: 19rem;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+
+  .prose :global(figcaption) {
+    margin-top: 0.875rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.75rem 0;
+    font-size: 0.9375rem;
+  }
+
+  .prose :global(th) {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .prose :global(td) {
+    color: var(--ink-muted);
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    border-bottom: 1px solid var(--line);
+    padding: 0.625rem 1rem 0.625rem 0;
+  }
+
+  .prose :global(ol) {
+    margin: 0 0 1.125rem;
+    padding-left: 1.25rem;
+    color: var(--ink-muted);
+  }
 </style>
 
 <script>
@@ -324,4 +425,28 @@ const facts = [
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll, { passive: true });
   }
+
+  // A region you can only reach by dragging is unusable without a mouse, so any
+  // row in the article that actually overflows becomes a focusable group. Done
+  // here rather than in the markup because whether something overflows depends
+  // on the viewport, not on the source.
+  const markScrollable = () => {
+    for (const row of document.querySelectorAll<HTMLElement>('.prose p')) {
+      const overflows = row.scrollWidth > row.clientWidth + 1;
+
+      if (overflows && !row.hasAttribute('tabindex')) {
+        row.tabIndex = 0;
+        row.setAttribute('role', 'group');
+        row.setAttribute('aria-label', 'Scrollable images, use arrow keys');
+      } else if (!overflows && row.hasAttribute('tabindex')) {
+        row.removeAttribute('tabindex');
+        row.removeAttribute('role');
+        row.removeAttribute('aria-label');
+      }
+    }
+  };
+
+  markScrollable();
+  addEventListener('resize', markScrollable, { passive: true });
+  addEventListener('load', markScrollable);
 </script>

@@ -2,18 +2,18 @@
 title: AdvisrLab
 summary: >-
   An AI advising assistant MVP for UW iSchool Informatics students. The hard part
-  wasn't teaching it to answer — it was teaching it to stop.
+  wasn't teaching it to answer, it was teaching it to stop.
 role:
   - Team Lead
   - User research
-  - Prompt architecture
+  - Prompt Engineering
   - Roadmap
 team: 5 people
 timeline: Jan 2025 – May 2026
 tools:
   - UW Purple AI
   - Figma
-  - Excel
+  - Miro
   - Claude
 thumbnail: ../../assets/advisrlab/advisrlab-logo.png
 order: 1
@@ -26,7 +26,7 @@ Scenario: Registration week. A student asks whether they can skip a prerequisite
 
 It's wrong. The student registers, finds out in week two, and loses a quarter.
 
-That failure was the reason this project was hard. Not the answering — the knowing when not to.
+That failure was the reason this project was hard.
 
 ![AdvisrLab running in the UW Purple AI interface. A student asks whether they can take INFO 340 without finishing INFO 201, mentioning a community college web dev class. Rather than answering yes or no, the assistant replies that this depends on the student's transcript and needs a real person to check, links to the iSchool advising support page, and lists what to bring to the appointment.](../../assets/advisrlab/escalation-exmp.png)
 
@@ -36,17 +36,17 @@ That failure was the reason this project was hard. Not the answering — the kno
 
 ### Wait time wasn’t the problem
 
-We surveyed 29 students *expecting* to hear that advising was too slow.
+We surveyed 29 students _expecting_ to hear that advising was too slow.
 
 **Only 15%** said wait time was their biggest problem.
 
-The real complaint was that the answers didn't agree with each other — **31%** said information was scattered across too many sites, and **19%** said they'd gotten conflicting answers from different sources. Half the respondents had an information-trust problem, not a speed problem.
+The real complaint was that the answers didn't agree with each other. **31%** said information was scattered across too many sites, and **19%** said they'd gotten conflicting answers from different sources. Half the respondents had an information-trust problem, not a speed problem.
 
 ![Bar chart. Q6: What is the biggest challenge you face with the current advising system? Of 26 responses — information is hard to find across different websites, 8; advisors are difficult to schedule with, 7; receiving conflicting information from different sources, 5; wait time for response is too long, 4; other, 2.](../../assets/advisrlab/Q6.png)
 
 ### Students already had AI. It wasn't working.
 
-**83%** of students had used AI for academic questions — a third of them often or always.
+**83%** of students had used AI for academic questions, a third of them often or always.
 
 But only **32%** said it gave them an effective answer. The most common response was "sometimes."
 
@@ -56,11 +56,11 @@ So the gap wasn't access to AI. Students had that. The gap was an AI whose answe
 
 ### What students said would earn their trust
 
-We asked directly. The answers pointed straight at two features:
+We asked directly. The answers pointed straight at 3 things:
 
-* **71%** — direct links to official iSchool sources  
-* **63%** — the ability to escalate to a human when the bot fails  
-* **50%** — the bot admitting when it doesn't know
+- **71%** — direct links to official iSchool sources
+- **63%** — the ability to escalate to a human when the bot fails
+- **50%** — the bot admitting when it doesn't know
 
 An "approved by advisors" badge came last at 46%. Students didn't want to be told the tool was credible. They wanted to verify it themselves.
 
@@ -68,25 +68,23 @@ An "approved by advisors" badge came last at 46%. Students didn't want to be tol
 
 ### The finding that changed what we were building
 
-**46%** of students said they often or always avoided asking an advising question — not because they couldn't reach an advisor, but because they felt embarrassed the question was stupid.
+**46%** of students said they often or always avoided asking an advising question, not because they couldn't reach an advisor, but because they felt embarrassed the question was stupid.
 
 Those questions never reached the system at all. They didn't show up as long wait times or unanswered emails. They just went unasked.
 
 **35%** told us they'd use an AI specifically to ask without feeling judged.
 
-**The assistant doesn’t only cover nights and weekends. It also covers the questions students wouldn't ask a person.**
-
-That set the bar for tone. An assistant that answered basic questions briskly, or made a student feel handled, would fail at the exact moment it mattered most.
+**The assistant doesn’t only cover after-hours. It also covers the questions students wouldn't ask a person.**
 
 ## Decisions
 
-**Citations on every factual claim.** The top trust factor, and the direct fix for conflicting information. If two sources disagreed, the assistant linked the official one rather than picking a winner silently.
+**Citations on every factual claim.** The top trust factor, and the direct fix for conflicting information. If two sources disagreed, the assistant linked the official one rather than picking a winner.
 
-**Two prompt layers, not one.** Advising facts in one, voice in the other. A single prompt makes them fight — every tone fix risks breaking a fact. Split, the team could update policy without retesting how it talked.
+**Two prompt layers, not one.** Advising facts in one, voice in the other. A single prompt makes it easy to ignore, every tone fix risks breaking a rule. Having two layers ensures the ability to update policy without retesting how it talked.
 
 ![Diagram of two stacked prompt layers. The Agent Prompt holds AdvisrLab's identity, tone, and behavior rules. Below it, the Platform Prompt holds org-wide rules: confidence levels, escalation, and citation format.](../../assets/advisrlab/two-prompt-layers.png)
 
-**Escalate on low confidence.** 63% named this as a trust factor, but drawing the line was the hardest call on the project. Escalate too often and it's a glorified FAQ. Too rarely and a student registers on a wrong answer and loses a quarter. .
+**Escalate on low confidence.** 63% named this as a trust factor, but drawing the line was the hardest call on the project. Escalate too often and it's a glorified FAQ. Too rarely and a student registers on a wrong answer.
 
 ![Flowchart. A question comes in and reaches a decision point labeled "Confident?", which branches two ways: to an answer, or to an escalation message.](../../assets/advisrlab/confident-escalation.png)
 
@@ -98,15 +96,14 @@ Six user testing sessions produced four failure modes, each with a matching desi
 
 **Citations were the only feature students named unprompted in both rounds.** 71% of survey respondents ranked them the top trust factor, and 5 of 7 testers brought them up without being asked. That consistency is why citations became a hard requirement rather than a nice-to-have.
 
-**Testers described the escalation system before we built it.** Asked what would improve the tool, they named a confidence score, a refusal to answer when unsure, and a booking link back to an advisor — the three components of the handoff design.
+**Testers described the escalation system before we built it.** Asked what would improve the tool, they named a confidence score, a refusal to answer when unsure, and a booking link back to an advisor = the three components of the handoff design.
 
-The project shipped as a specification, not a product: prompt architecture, escalation logic, and handoff documentation for the team taking it forward. Presented to iSchool’s IT team.
+The project shipped as a MVP: agent prompts, escalation logic, and handoff documentation for the team taking it forward. Presented to iSchool’s IT team and iSchool advising board.
 
 ## What I'd change
 
-Six usability participants is enough to find problems, not enough to rank them. The self-correction failure showed up once, clearly — I'd want to know whether it happens on every challenge or only on low-confidence answers before designing the fix.
+Six usability participants is enough to find problems, but not enough to rank them. The self-correction failure showed up once, I'd want to know whether it happens on every challenge or only on low-confidence answers before designing the fix.
 
 ---
 
-*The full survey instrument, interview script, and testing findings — happy to walk through them.*
-
+_The full survey instrument, interview script, and testing findings — happy to walk through them._
