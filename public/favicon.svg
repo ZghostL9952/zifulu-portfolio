@@ -1,11 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#14544a" />
-  <text
-    x="16"
-    y="23"
-    text-anchor="middle"
-    font-family="Georgia, serif"
-    font-size="20"
-    fill="#fdfcfa"
-  >Z</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Daisy">
+  <g transform="translate(50,50) scale(0.52)" fill="#ffffff" stroke="#3a352f" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
+    <path id="petal" d="M-6,-30 C-15,-44 -16,-68 -8,-79 C-3,-86 3,-86 8,-79 C16,-68 15,-44 6,-30 Z" transform="rotate(2) scale(1.02)"/>
+    <use href="#petal" transform="rotate(37) scale(0.97)"/>
+    <use href="#petal" transform="rotate(73) scale(1.03)"/>
+    <use href="#petal" transform="rotate(108) scale(0.99)"/>
+    <use href="#petal" transform="rotate(145) scale(1.01)"/>
+    <use href="#petal" transform="rotate(180) scale(0.96)"/>
+    <use href="#petal" transform="rotate(216) scale(1.04)"/>
+    <use href="#petal" transform="rotate(251) scale(0.98)"/>
+    <use href="#petal" transform="rotate(287) scale(1.02)"/>
+    <use href="#petal" transform="rotate(323) scale(0.97)"/>
+    <path d="M0,-27 C15,-28 28,-15 27,1 C26,17 12,28 -4,27 C-19,26 -28,12 -27,-5 C-26,-19 -14,-26 0,-27 Z" fill="#f4c95d"/>
+    <circle cx="-9" cy="-8" r="2.6" fill="#c9952f" stroke="none"/>
+    <circle cx="4" cy="-13" r="2.2" fill="#c9952f" stroke="none"/>
+    <circle cx="12" cy="-3" r="2.4" fill="#c9952f" stroke="none"/>
+    <circle cx="7" cy="9" r="2.4" fill="#c9952f" stroke="none"/>
+    <circle cx="-5" cy="4" r="2.2" fill="#c9952f" stroke="none"/>
+    <circle cx="-15" cy="6" r="2.2" fill="#c9952f" stroke="none"/>
+    <circle cx="-2" cy="16" r="2" fill="#c9952f" stroke="none"/>
+  </g>
 </svg>

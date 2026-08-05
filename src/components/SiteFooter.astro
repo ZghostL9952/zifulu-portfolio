@@ -3,19 +3,31 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-line mt-24">
-  <div
-    class="mx-auto max-w-4xl px-6 py-8 flex flex-wrap items-baseline justify-between gap-4 text-[0.9375rem] text-ink-muted"
-  >
-    <p class="m-0">&copy; {year} Zifu Lu</p>
+  <div class="mx-auto max-w-4xl px-6 py-8 text-[0.9375rem] text-ink-muted">
+    {/* The invite sits at full --ink so it reads as the point of the footer,
+        with the credit and links stepped back beneath it. */}
+    <p class="m-0 text-ink">Happy to chat about my work and how this portfolio was made!</p>
 
-    <ul class="flex flex-wrap gap-6 list-none m-0 p-0">
-      <li>
-        <a href="mailto:zlu9952@uw.edu" class="underline underline-offset-4">zlu9952@uw.edu</a>
-      </li>
-      <li>
-        {/* TODO: replace with the real LinkedIn URL. */}
-        <a href="https://www.linkedin.com/" class="underline underline-offset-4">LinkedIn</a>
-      </li>
-    </ul>
+    <div class="mt-5 flex flex-wrap items-baseline justify-between gap-4">
+      <p class="m-0">&copy; {year} Zifu Lu</p>
+
+      <ul class="flex flex-wrap gap-6 list-none m-0 p-0">
+        <li>
+          <a href="mailto:lzf9952@gmail.com" class="underline underline-offset-4">
+            lzf9952@gmail.com
+          </a>
+        </li>
+        <li>
+          {/* Needs the scheme: without it the browser reads this as a relative
+              path and lands on /work/www.linkedin.com/... */}
+          <a
+            href="https://www.linkedin.com/in/zifu-lu"
+            class="underline underline-offset-4"
+          >
+            LinkedIn
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </footer>
