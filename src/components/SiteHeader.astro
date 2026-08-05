@@ -18,12 +18,22 @@ const links = [
     </a>
 
     <nav aria-label="Main">
-      <ul class="flex items-baseline gap-6 list-none m-0 p-0">
+      <ul class="flex items-center gap-6 list-none m-0 p-0">
         {
           links.map((link) => {
             const isCurrent = link.match(path);
             return (
-              <li>
+              /*
+                The daisy sits in the li rather than inside the anchor so the
+                hover underline stays under the word and does not run beneath
+                the flower. alt="" because aria-current already tells a screen
+                reader which page this is -- the daisy is the visual half of
+                the same signal.
+              */
+              <li class="flex items-center gap-1.5">
+                {isCurrent && (
+                  <img src="/favicon.svg" alt="" width="16" height="16" class="flex-none" />
+                )}
                 <a
                   href={link.href}
                   aria-current={isCurrent ? 'page' : undefined}
