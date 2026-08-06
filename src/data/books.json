@@ -8,11 +8,115 @@
     "slot": "book-01"
   },
   {
-    "id": "laws-of-ux",
-    "title": "Laws of UX",
-    "author": "Jon Yablonski",
+    "id": "rich-dad-poor-dad",
+    "title": "Rich Dad Poor Dad",
+    "author": "Robert Kiyosaki, Sharon Lechter",
     "status": "reading",
     "finished": "N/A",
     "slot": "book-02"
+  },
+  {
+    "id": "dont-make-me-think",
+    "title": "Don't Make Me Think",
+    "author": "Steve Krug",
+    "status": "read",
+    "finished": "",
+    "slot": "book-03"
+  },
+  {
+    "id": "educated",
+    "title": "Educated",
+    "author": "Tara Westover",
+    "status": "read",
+    "finished": "",
+    "slot": "book-04"
+  },
+  {
+    "id": "deng-chu-jian",
+    "title": "登出键",
+    "author": "莫子",
+    "status": "read",
+    "finished": "",
+    "slot": "book-05"
+  },
+  {
+    "id": "a-new-earth",
+    "title": "A New Earth",
+    "author": "Eckhart Tolle",
+    "status": "read",
+    "finished": "",
+    "slot": "book-06"
+  },
+  {
+    "id": "letranger",
+    "title": "L'Étranger",
+    "author": "Albert Camus",
+    "status": "read",
+    "finished": "",
+    "slot": "book-07"
+  },
+  {
+    "id": "shan-de-yi-qie",
+    "title": "我所告诉你关于那座山的一切",
+    "author": "劉宸君",
+    "status": "read",
+    "finished": "",
+    "slot": "book-08"
+  },
+  {
+    "id": "the-why-cafe",
+    "title": "The Why Café",
+    "author": "John P. Strelecky",
+    "status": "read",
+    "finished": "",
+    "slot": "book-09"
+  },
+  {
+    "id": "siddhartha",
+    "title": "Siddhartha",
+    "author": "Hermann Hesse",
+    "status": "read",
+    "finished": "",
+    "slot": "book-10"
+  },
+  {
+    "id": "urban-mindfulness",
+    "title": "Urban Mindfulness",
+    "author": "Jonathan S. Kaplan",
+    "status": "read",
+    "finished": "",
+    "slot": "book-11"
+  },
+  {
+    "id": "return-to-the-why-cafe",
+    "title": "Return to the Why Café",
+    "author": "John P. Strelecky",
+    "status": "read",
+    "finished": "",
+    "slot": "book-12"
+  },
+  {
+    "id": "bei-taoyan-de-yongqi",
+    "title": "被讨厌的勇气",
+    "author": "岸见一郎, 古贺史健",
+    "status": "read",
+    "finished": "",
+    "slot": "book-13"
+  },
+  {
+    "id": "design-of-everyday-things",
+    "title": "The Design of Everyday Things",
+    "author": "Don Norman",
+    "status": "reading",
+    "finished": "N/A",
+    "slot": "book-14"
+  },
+  {
+    "id": "about-face",
+    "title": "About Face: The Essentials of Interaction Design",
+    "author": "Alan Cooper, Robert Reimann, David Cronin, Christopher Noessel",
+    "status": "reading",
+    "finished": "N/A",
+    "slot": "book-15"
   }
 ]
