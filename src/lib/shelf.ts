@@ -86,14 +86,3 @@ export function parseHitAreas(svg: string): Slot[] {
 
   return slots;
 }
-
-/**
- * Spine text runs along the height of the rect once it is rotated upright, so
- * the height is the character budget. Rough advance width for Instrument Sans
- * at this size is a little over half the font size.
- */
-export function fitSpineText(title: string, height: number, fontSize: number): string {
-  const max = Math.floor(height / (fontSize * 0.54));
-  if (title.length <= max) return title;
-  return `${title.slice(0, Math.max(1, max - 1)).trimEnd()}…`;
-}

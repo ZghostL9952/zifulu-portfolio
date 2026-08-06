@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import shelfSvg from '../assets/shelf-hitareas.svg?raw';
 import books from '../data/books.json';
-import { parseHitAreas, fitSpineText } from '../lib/shelf';
+import { parseHitAreas } from '../lib/shelf';
 
 /**
  * The illustration is one flat WebP. Everything interactive lives in an
@@ -14,13 +14,9 @@ import { parseHitAreas, fitSpineText } from '../lib/shelf';
  * any container size, so no coordinate maths is involved.
  */
 
-// Spine text is 13px at the smallest desktop rendering, which is the floor
-// CLAUDE.md sets. 2400 user units across a ~896px column is a 0.373 scale, so
-// 35 units lands just over 13px.
-const SPINE_FONT_SIZE = 35;
-
 // The artwork's canvas is 2400x1799 but the shelves end at y=1372, so the frame
-// crops the empty band below rather than the bottom row of books.
+// crops the empty band below rather than the bottom row of books. The extra
+// headroom above the top shelf also gives the lift somewhere to go.
 const VIEW_HEIGHT = 1400;
 
 const slots = parseHitAreas(shelfSvg);
@@ -74,30 +70,9 @@ if (bookBySlot.size !== books.length) {
           const study = slot.kind === 'case' ? studyBySlot.get(slot.id) : undefined;
           if (!book && !study) return null;
 
-          // Centre of the rect in the group's own coordinates.
-          const cx = slot.x + slot.width / 2;
-          const cy = slot.y + slot.height / 2;
-
-          // The group carries the shape's transform so the title shares it, per
-          // CLAUDE.md. Inside a mirrored group text renders backwards, so it is
-          // flipped back. Book spines are narrow and upright so their titles
-          // stand on end; case slots are landscape boxes, so theirs stay level.
-          const textTransform = [
-            `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`,
-            slot.mirrored ? 'scale(-1 1)' : '',
-            book ? 'rotate(-90)' : '',
-          ]
-            .filter(Boolean)
-            .join(' ');
-
           const label = book
             ? `${book.title} by ${book.author}`
             : `${study!.data.title}, case study`;
-
-          // Whichever edge the text runs along is the character budget.
-          const spine = book
-            ? fitSpineText(book.title, slot.height, SPINE_FONT_SIZE)
-            : fitSpineText(study!.data.title, slot.width, SPINE_FONT_SIZE);
 
           const data = {
             'data-slot': slot.id,
@@ -107,8 +82,15 @@ if (bookBySlot.size !== books.length) {
             'data-status': book ? book.status : '',
           };
 
+          {/*
+            Two nested groups on purpose. The outer one carries the lift, which
+            is a CSS transform; the inner carries the shape's own transform from
+            Figma. A CSS `transform` REPLACES the `transform` attribute rather
+            than composing with it, so putting both on one element would throw
+            away the matrix on every leaning and mirrored book.
+          */}
           const shape = (
-            <>
+            <g class="shelf-shape" transform={slot.transform ?? undefined}>
               <rect
                 class="shelf-hit"
                 x={slot.x}
@@ -117,33 +99,15 @@ if (bookBySlot.size !== books.length) {
                 height={slot.height}
                 vector-effect="non-scaling-stroke"
               />
-              {/* Spine text is SVG, not an HTML overlay, and shares the group's
-                  transform so it leans with the books that lean. */}
-              <text class="shelf-spine" transform={textTransform} font-size={SPINE_FONT_SIZE}>
-                {spine}
-              </text>
-            </>
+            </g>
           );
 
           return study ? (
-            <a
-              class="shelf-slot"
-              href={`/work/${study.id}`}
-              transform={slot.transform ?? undefined}
-              aria-label={label}
-              {...data}
-            >
+            <a class="shelf-slot" href={`/work/${study.id}`} aria-label={label} {...data}>
               {shape}
             </a>
           ) : (
-            <g
-              class="shelf-slot"
-              transform={slot.transform ?? undefined}
-              tabindex="0"
-              role="img"
-              aria-label={label}
-              {...data}
-            >
+            <g class="shelf-slot" tabindex="0" role="img" aria-label={label} {...data}>
               {shape}
             </g>
           );
@@ -194,6 +158,25 @@ if (bookBySlot.size !== books.length) {
   .shelf-slot {
     pointer-events: auto;
     outline: none;
+    /* The lift. 22 user units is about 8px at the column's 0.373 scale --
+       enough to read as the book easing up off the shelf. */
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shelf-slot:hover,
+  .shelf-slot:focus-visible {
+    transform: translateY(-22px);
+  }
+
+  /* CLAUDE.md: no transforms under reduced motion, state changes instantly.
+     The scrim, the border and the panel still carry the state. */
+  @media (prefers-reduced-motion: reduce) {
+    .shelf-slot,
+    .shelf-slot:hover,
+    .shelf-slot:focus-visible {
+      transform: none;
+      transition: none;
+    }
   }
 
   .shelf-hit {
@@ -222,21 +205,6 @@ if (bookBySlot.size !== books.length) {
     stroke-width: 3;
   }
 
-  .shelf-spine {
-    fill: #ffffff;
-    /* Spines are every colour in the illustration, so the label carries its own
-       contrast rather than assuming a background. */
-    stroke: rgb(26 26 24 / 0.55);
-    stroke-width: 4;
-    paint-order: stroke;
-    stroke-linejoin: round;
-    font-family: var(--font-sans);
-    font-weight: 500;
-    text-anchor: middle;
-    dominant-baseline: central;
-    pointer-events: none;
-  }
-
   /* Floating panel. Fixed, so it is positioned from the shape's viewport rect
      and can never be clipped by the frame's overflow. */
   .shelf-panel {
@@ -248,7 +216,7 @@ if (bookBySlot.size !== books.length) {
     padding: 14px;
     border: 1px solid var(--line);
     border-radius: 10px;
-    background: var(--surface);
+    background: var(--accent-soft);
     box-shadow: 0 4px 16px rgb(26 26 24 / 0.1);
     pointer-events: none;
   }
@@ -271,12 +239,14 @@ if (bookBySlot.size !== books.length) {
     color: var(--ink-muted);
   }
 
+  /* --surface, not --accent-soft: the panel itself is now the pastel, so a
+     pill in the same tone would disappear into it. */
   .shelf-panel-pill {
     display: inline-block;
     margin-top: 8px;
     padding: 2px 8px;
     border-radius: 999px;
-    background: var(--accent-soft);
+    background: var(--surface);
     color: var(--accent);
     font-size: 12px;
     font-weight: 500;
