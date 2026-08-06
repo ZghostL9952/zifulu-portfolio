@@ -37,7 +37,7 @@ const facts = [
     already the right reading order, so nothing needs reordering.
   */}
   <div
-    class="mx-auto grid max-w-5xl gap-x-12 px-6 pt-16 lg:grid-cols-[11rem_minmax(0,42rem)] lg:justify-center"
+    class="mx-auto grid max-w-6xl gap-x-12 px-6 pt-16 lg:grid-cols-[11rem_minmax(0,50rem)] lg:justify-center"
   >
     <header class="lg:col-start-2">
       <h1 class="m-0 text-4xl">{title}</h1>
@@ -192,6 +192,25 @@ const facts = [
   /* The wrapper already draws a rule above the first section. */
   .prose :global(h2:first-child) {
     margin-top: 0;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* In a boxed study the outline already separates sections, so the heading
+     drops its own rule rather than drawing a second line inside the box. */
+  .prose :global(.case-section > h2:first-child) {
+    margin-top: 0;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* Boxes provide their own separation; the wrapper rule above the first one
+     would just double it.
+
+     Wrapped in :global() because .case-section is rendered by Section.astro and
+     carries that component's scope id -- scoped here, this selector would be
+     rewritten to expect a class this component never renders, and never match. */
+  :global(.prose:has(.case-section)) {
     border-top: 0;
     padding-top: 0;
   }

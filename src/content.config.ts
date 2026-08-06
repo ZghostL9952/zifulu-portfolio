@@ -6,7 +6,7 @@ import { glob } from 'astro/loaders';
  * The filename becomes the URL slug: advisrlab.md -> /work/advisrlab
  */
 const work = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/work' }),
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/work' }),
   // The schema is a function so it receives `image()`, which resolves a path in
   // frontmatter into a real image Astro can optimize -- and fails the build if
   // the file is missing, rather than shipping a broken <img>.
