@@ -232,44 +232,6 @@ const facts = [
     color: var(--ink);
   }
 
-  /* Callout.
-
-     Written as a markdown blockquote (`> text`). Deliberately a different
-     mechanism from the fully-bold thesis paragraph above: that one is display
-     type with no fill, this one is body type on a fill. Two emphasis levels
-     that cannot be confused for each other.
-
-     The fill is --accent-soft, which the palette already reserves for fills,
-     so no new colour enters. No border and no shadow. The wide margins are the
-     point -- a callout earns its weight from the space around it. */
-  .prose :global(blockquote) {
-    margin: 3.5rem 0;
-    padding: 1.5rem 1.75rem;
-    background-color: var(--accent-soft);
-    border-radius: 12px;
-  }
-
-  .prose :global(blockquote > *:first-child) {
-    margin-top: 0;
-  }
-
-  .prose :global(blockquote > *:last-child) {
-    margin-bottom: 0;
-  }
-
-  .prose :global(blockquote p) {
-    color: var(--ink);
-    font-size: 1.0625rem;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 640px) {
-    .prose :global(blockquote) {
-      margin: 2.5rem 0;
-      padding: 1.25rem 1.25rem;
-    }
-  }
-
   .prose :global(ul) {
     margin: 0 0 1.125rem;
     padding-left: 1.25rem;
