@@ -16,21 +16,7 @@ order: 2
 draft: false
 ---
 
-import Section from '../../components/Section.astro';
-import Split from '../../components/Split.astro';
-import Carousel from '../../components/Carousel.astro';
-import Slide from '../../components/Slide.astro';
-
-import oldScreen from '../../assets/sportsexcitement/old-screen.png';
-import competitiveAnalysis from '../../assets/sportsexcitement/competitive-analysis.png';
-import signup1 from '../../assets/sportsexcitement/signup-1.png';
-import signup3 from '../../assets/sportsexcitement/signup-3.png';
-
-<Section>
-
 ## The more involved you were, the worse sign-up got
-
-<Split img={oldScreen} alt="The old sign-up form with every role selected, each one adding its own set of fields.">
 
 Scenario: A mom plays rec league, coaches her daughter's team, and follows her
 games. She's three users at once.
@@ -41,11 +27,7 @@ selectable.
 Then it gave her all three sets of fields. The more role you are, the
 longer your sign-up process is, before you'd seen anything the app does.
 
-</Split>
-
-</Section>
-
-<Section>
+![The old sign-up on two screens, with Parent/Guardian and Coach both selected. Red dashed outlines mark the stacked field groups: parent and kid names, birth date, coaching credentials, country, address and city on the first screen, then sport, team size, age group and experience level on the second.](../../assets/sportsexcitement/old-design.png)
 
 ## The product
 
@@ -57,13 +39,7 @@ connects.
 I was the UX design intern. My task was the redesigning the onboarding
 flow.
 
-</Section>
-
-<Section>
-
 ## We studied three competitors
-
-<Split img={competitiveAnalysis} alt="Three apps, four pathways each. Only one used action-based roles, and none treated parents as primary." size="wide">
 
 I ran a competitive analysis with the UX researcher on the team. We
 tested TeamSnap One (30M users), GameChanger (9M), and SportsEngine
@@ -76,7 +52,7 @@ We mapped four pathways through each app:
 - **Coach** creating a team on their own
 - **Coach** invited by a league admin
 
-</Split>
+![Three apps, four pathways each. Only one used action-based roles, and none treated parents as primary.](../../assets/sportsexcitement/competitive-analysis.png)
 
 Two findings mattered:
 
@@ -93,34 +69,17 @@ GameChanger files them under "Fan" with limited access. TeamSnap calls them
 secondary. Parents are the ones paying and organizing, and all three apps
 treat them as an afterthought.
 
-</Section>
-
-<Section>
-
 ## The design
-
-<Carousel label="Three changes to the design">
-
-<Slide img={signup1} alt="Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.">
 
 ### Cut sign-up to the minimum.
 
-Email, password, country, first and last
-name, date of birth, zip code, and terms. Seven fields, split across two
-screens so neither one feels long.
-
-</Slide>
-
-<Slide img={signup3} alt="Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.">
+Email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens so neither one feels long.
+![Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.](../../assets/sportsexcitement/signup-1.png)
 
 ### Added email verification.
 
-Account security, and it matches what all
-three competitors do.
-
-</Slide>
-
-<Slide>
+Account security, and it matches what all three competitors do.
+![Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.](../../assets/sportsexcitement/signup-3.png)
 
 ### Moved role assignment to the home screen.
 
@@ -132,34 +91,24 @@ A "Let's get started" menu with three options:
 | Add my child  | Parent           |
 | Create a team | Coach            |
 
-<Fragment slot="media">
-  <figure>
-    <video
-      controls
-      preload="metadata"
-      playsinline
-      width="696"
-      height="1400"
-      aria-label="Screen recording of the Let's get started menu on the SportsExcitement home screen, offering Join a team, Add my child, and Create a team."
-    >
-      <source src="/video/action-menu.mp4" type="video/mp4" />
-      Your browser cannot play this video.
-    </video>
-    <figcaption>Roles assign from the first action, not from a form field.</figcaption>
-  </figure>
-</Fragment>
-
-</Slide>
-
-</Carousel>
+<figure>
+  <video
+    controls
+    preload="metadata"
+    playsinline
+    width="696"
+    height="1400"
+    aria-label="Screen recording of the Let's get started menu on the SportsExcitement home screen, offering Join a team, Add my child, and Create a team."
+  >
+    <source src="/video/action-menu.mp4" type="video/mp4" />
+    Your browser cannot play this video.
+  </video>
+  <figcaption>Roles assign from the first action, not from a form field.</figcaption>
+</figure>
 
 GameChanger proved action-based assignment works, but it only offers two paths: find a team or create one. A parent has to pick the athlete path and then
 correct it later. Adding "Add my child" as a first-class option is the
 direct fix for the gap we found in all three apps.
-
-</Section>
-
-<Section>
 
 ## Working with AI
 
@@ -172,17 +121,11 @@ layout had no answer to why any of it was that way.
 
 So I split the work. AI for breadth, the reasoning stayed mine.
 
-</Section>
-
-<Section>
-
 ## What shipped
 
 **Sign-up went from 15+ fields to 7, across two screens.**
 
 I handed off the final design to the design team and the development team, documenting edge cases and haptics. The feature is still in implementation and user testing phase before my internship ended. New designers picked up my work and continued designing user verification screens.
-
-</Section>
 
 ---
 

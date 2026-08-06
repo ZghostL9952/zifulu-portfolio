@@ -189,31 +189,8 @@ const facts = [
     color: var(--ink-muted);
   }
 
-  /* The wrapper already draws a rule above the first section.
-
-     Direct child only: in a sectioned study every h2 is the first child of its
-     own <section>, so a descendant `h2:first-child` would strip the hairline
-     from all of them and leave no separators anywhere. */
+  /* The wrapper already draws a rule above the first section. */
   .prose > :global(h2:first-child) {
-    margin-top: 0;
-    border-top: 0;
-    padding-top: 0;
-  }
-
-  /* Sections carry no box, so every h2 draws its own hairline -- including the
-     first, which means the wrapper drops the duplicate rule above it.
-
-     Wrapped in :global() because .case-section is rendered by Section.astro and
-     carries that component's scope id -- scoped here, this selector would be
-     rewritten to expect a class this component never renders, and never match. */
-  :global(.prose:has(.case-section)) {
-    border-top: 0;
-    padding-top: 0;
-  }
-
-  /* ...and the first section is the one that sits against the header, so it is
-     the only one that drops its own rule. */
-  :global(.prose:has(.case-section) .case-section:first-child > h2) {
     margin-top: 0;
     border-top: 0;
     padding-top: 0;
@@ -304,6 +281,35 @@ const facts = [
      width, not same height -- the source is a taller crop. */
   .prose :global(img[src*='old-screen']) {
     width: 11rem;
+  }
+
+  /* Split rows.
+
+     Same convention as the filmstrip below: a blank line between text and an
+     image keeps the image full width underneath, no blank line puts them in
+     ONE paragraph and pairs them side by side. The rule reads as "a paragraph
+     holding an image plus something else, but not a run of images."
+
+     The image floats rather than the paragraph becoming a grid, deliberately.
+     In a grid container every element child is its own grid item, so a single
+     **bold** run inside the text would silently break the row into three
+     columns. A float is immune to whatever inline markup the sentence has.
+     `flow-root` makes the paragraph contain its own float so a short sentence
+     cannot let the image overlap what comes next. */
+  .prose :global(p:has(> img):not(:has(> img:only-child)):not(:has(img + img))) {
+    display: flow-root;
+    margin: 1.75rem 0;
+  }
+
+  @media (min-width: 900px) {
+    .prose
+      :global(p:has(> img):not(:has(> img:only-child)):not(:has(img + img)) > img) {
+      float: right;
+      width: 13rem;
+      max-width: 40%;
+      margin: 0.25rem 0 1rem 2.5rem;
+      border-radius: 10px;
+    }
   }
 
   /* Filmstrip.
