@@ -26,7 +26,7 @@ connects.
 
 👉 I was tasked was with redesigning the sign-up flow so users reach the app faster.
 
-## The more involved you were, the worse sign-up got
+> The more involved you were, the worse sign-up got
 
 Scenario: A mom plays rec league, coaches her daughter's team, and follows her
 games. She's three users at once.
