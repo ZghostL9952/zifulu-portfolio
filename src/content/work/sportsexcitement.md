@@ -69,7 +69,7 @@ treat them as an afterthought.
 
 ### Cut sign-up to the minimum.
 
-After confirming with the Product and Development team, these fields were the must keep: email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens.
+After confirming with the Product and Development team, these fields were the must-kept: email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens.
 
 </div>
 <div>
@@ -96,6 +96,10 @@ A "Let's get started" menu with three options:
 | Add my child  | Parent  |
 | Create a team | Coach   |
 
+GameChanger proved action-based assignment works, but it only offers two paths: find a team or create one. A parent has to pick the athlete path and then
+correct it later. Adding "Add my child" as a first-class option is the
+direct fix for the gap we found in all three apps.
+
 </div>
 <figure>
   <video
@@ -114,10 +118,6 @@ A "Let's get started" menu with three options:
   <figcaption>Roles assign from the first action, not from a form field.</figcaption>
 </figure>
 </div>
-
-GameChanger proved action-based assignment works, but it only offers two paths: find a team or create one. A parent has to pick the athlete path and then
-correct it later. Adding "Add my child" as a first-class option is the
-direct fix for the gap we found in all three apps.
 
 ## Working with AI
 

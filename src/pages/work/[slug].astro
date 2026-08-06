@@ -337,6 +337,12 @@ const facts = [
     }
   }
 
+  /* The third change is its own beat, separate from the pair above it and the
+     composite screens in between, so it opens with noticeably more air. */
+  .prose :global(.with-media) {
+    margin-top: 4.5rem;
+  }
+
   @media (min-width: 900px) {
     .prose :global(.with-media) {
       grid-template-columns: minmax(0, 1fr) 14rem;
