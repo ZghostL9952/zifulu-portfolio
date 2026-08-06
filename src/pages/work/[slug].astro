@@ -20,10 +20,11 @@ const { study } = Astro.props;
 const { Content, headings } = await render(study);
 const sections = headings.filter((heading) => heading.depth === 2);
 
-const { title, summary, role, team, timeline, tools } = study.data;
+const { title, summary, role, company, team, timeline, tools } = study.data;
 
 // Role is rendered as tags, so it is handled separately from the plain-text rows.
 const facts = [
+  { label: 'Company', value: company },
   { label: 'Team', value: team },
   { label: 'Timeline', value: timeline },
   { label: 'Tools', value: tools.length ? tools.join(', ') : undefined },

@@ -16,6 +16,7 @@ const work = defineCollection({
       summary: z.string(),
       // Rendered as tags, so one entry per role rather than one prose line.
       role: z.array(z.string()).nonempty(),
+      company: z.string().optional(),
       team: z.string().optional(),
       timeline: z.string(),
       tools: z.array(z.string()).default([]),

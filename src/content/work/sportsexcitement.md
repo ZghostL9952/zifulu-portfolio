@@ -5,6 +5,7 @@ summary: >-
   got the longest form.
 role:
   - UX Design Intern
+company: Sportsexcitement LLC
 team: Worked with UX designers, researchers, PMs, Devs; remote team
 timeline: Mar 2026 – June 2026
 tools:
@@ -15,6 +16,15 @@ thumbnail: ../../assets/sportsexcitement/sports-logo-mark.png
 order: 2
 draft: false
 ---
+
+## Context
+
+Sportsexcitement is a community sports platform for youth and adult
+leagues. Offering team management, schedules, player tracking, a gear store, and
+a social feed. Parents and coaches organize, athletes play, everyone
+connects.
+
+👉 I was tasked was with redesigning the sign-up flow so users reach the app faster.
 
 ## The more involved you were, the worse sign-up got
 
@@ -28,16 +38,6 @@ Then it gave her all three sets of fields. The more role you are, the
 longer your sign-up process is, before you'd seen anything the app does.
 
 ![The old sign-up on two screens, with Parent/Guardian and Coach both selected. Red dashed outlines mark the stacked field groups: parent and kid names, birth date, coaching credentials, country, address and city on the first screen, then sport, team size, age group and experience level on the second.](../../assets/sportsexcitement/old-design.png)
-
-## The product
-
-SportsExcitement is a community sports platform for youth and adult
-leagues. Team management, schedules, player tracking, a gear store, and
-a social feed. Parents and coaches organize; athletes play; everyone
-connects.
-
-I was the UX design intern. My task was the redesigning the onboarding
-flow.
 
 ## We studied three competitors
 
