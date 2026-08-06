@@ -313,6 +313,59 @@ const facts = [
     }
   }
 
+  /* Column layouts.
+
+     Written as a raw <div> in the markdown with blank lines inside it, which is
+     what lets CommonMark parse the contents as markdown rather than as one
+     opaque HTML block. Safe here because these wrappers hold only text -- an
+     <img> inside raw HTML would skip Astro's optimizer and ship a broken path.
+
+     Each feature gets its own inner <div> so it is a single grid item. Without
+     that, a heading and its paragraph are separate children and would land in
+     different columns. */
+  .prose :global(.cols-2),
+  .prose :global(.with-media) {
+    display: grid;
+    gap: 1.5rem;
+    margin: 1.75rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .prose :global(.cols-2) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .prose :global(.with-media) {
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      gap: 2.5rem;
+      align-items: start;
+    }
+  }
+
+  .prose :global(.cols-2 > div > *:first-child),
+  .prose :global(.with-media > div > *:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(.cols-2 > div > *:last-child),
+  .prose :global(.with-media > div > *:last-child) {
+    margin-bottom: 0;
+  }
+
+  /* The standalone-figure rule centres and caps video width; in a media column
+     it should simply fill the track. */
+  .prose :global(.with-media figure) {
+    margin: 0;
+  }
+
+  .prose :global(.with-media figure video) {
+    width: 100%;
+    max-width: none;
+  }
+
   /* Filmstrip.
 
      Consecutive image lines in markdown with no blank line between them parse
@@ -486,4 +539,14 @@ const facts = [
   markScrollable();
   addEventListener('resize', markScrollable, { passive: true });
   addEventListener('load', markScrollable);
+
+  // A looping autoplay is continuous motion, so a reduced-motion preference
+  // stops it. The controls stay either way, which is also what satisfies
+  // "pause, stop, hide" for moving content that starts on its own.
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    for (const video of document.querySelectorAll<HTMLVideoElement>('video[autoplay]')) {
+      video.autoplay = false;
+      video.pause();
+    }
+  }
 </script>

@@ -1,8 +1,8 @@
 ---
 title: SportsExcitement
 summary: >-
-  Redesigning sign-up for a community sports app where the most involved users
-  got the longest form.
+  A community sports platform for youth and adult leagues. Parents and coaches organize, athletes play, everyone
+  connects. I redesigned the sign-up where the most involved users got the longest form.
 role:
   - UX Design Intern
 company: Sportsexcitement LLC
@@ -17,15 +17,6 @@ order: 2
 draft: false
 ---
 
-## Context
-
-Sportsexcitement is a community sports platform for youth and adult
-leagues. Offering team management, schedules, player tracking, a gear store, and
-a social feed. Parents and coaches organize, athletes play, everyone
-connects.
-
-👉 I was tasked was with redesigning the sign-up flow so users reach the app faster.
-
 ## The more involved you were, the worse sign-up got
 
 Scenario: A mom plays rec league, coaches her daughter's team, and follows her
@@ -38,6 +29,8 @@ Then it gave her all three sets of fields. The more role you are, the
 longer your sign-up process is, before you'd seen anything the app does.
 
 ![The old sign-up on two screens, with Parent/Guardian and Coach both selected. Red dashed outlines mark the stacked field groups: parent and kid names, birth date, coaching credentials, country, address and city on the first screen, then sport, team size, age group and experience level on the second.](../../assets/sportsexcitement/old-design.png)
+
+👉 So, I was tasked was with redesigning the sign-up flow so users reach the app faster.
 
 ## We studied three competitors
 
@@ -71,30 +64,45 @@ treat them as an afterthought.
 
 ## The design
 
+<div class="cols-2">
+<div>
+
 ### Cut sign-up to the minimum.
 
-Email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens so neither one feels long.
-![Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.](../../assets/sportsexcitement/signup-1.png)
+After confirming with the Product and Development team, these fields were the must keep: email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens.
+
+</div>
+<div>
 
 ### Added email verification.
 
 Account security, and it matches what all three competitors do.
-![Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.](../../assets/sportsexcitement/signup-3.png)
+
+</div>
+</div>
+
+![The redesigned sign-up, five screens left to right: Create Account at step 1 of 2 with email, password and country; the searchable country picker; Check your email with a six-digit code; Account verified; and Almost There at step 2 of 2 with name, date of birth, address and terms.](../../assets/sportsexcitement/new-design.png)
+
+<div class="with-media">
+<div>
 
 ### Moved role assignment to the home screen.
 
 A "Let's get started" menu with three options:
 
-| What they tap | What they become |
-| ------------- | ---------------- |
-| Join a team   | Athlete          |
-| Add my child  | Parent           |
-| Create a team | Coach            |
+| Tap           | Become  |
+| ------------- | ------- |
+| Join a team   | Athlete |
+| Add my child  | Parent  |
+| Create a team | Coach   |
 
+</div>
 <figure>
   <video
+    autoplay
+    loop
+    muted
     controls
-    preload="metadata"
     playsinline
     width="696"
     height="1400"
@@ -105,6 +113,7 @@ A "Let's get started" menu with three options:
   </video>
   <figcaption>Roles assign from the first action, not from a form field.</figcaption>
 </figure>
+</div>
 
 GameChanger proved action-based assignment works, but it only offers two paths: find a team or create one. A parent has to pick the athlete path and then
 correct it later. Adding "Add my child" as a first-class option is the
