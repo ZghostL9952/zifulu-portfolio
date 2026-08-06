@@ -189,28 +189,32 @@ const facts = [
     color: var(--ink-muted);
   }
 
-  /* The wrapper already draws a rule above the first section. */
-  .prose :global(h2:first-child) {
+  /* The wrapper already draws a rule above the first section.
+
+     Direct child only: in a sectioned study every h2 is the first child of its
+     own <section>, so a descendant `h2:first-child` would strip the hairline
+     from all of them and leave no separators anywhere. */
+  .prose > :global(h2:first-child) {
     margin-top: 0;
     border-top: 0;
     padding-top: 0;
   }
 
-  /* In a boxed study the outline already separates sections, so the heading
-     drops its own rule rather than drawing a second line inside the box. */
-  .prose :global(.case-section > h2:first-child) {
-    margin-top: 0;
-    border-top: 0;
-    padding-top: 0;
-  }
-
-  /* Boxes provide their own separation; the wrapper rule above the first one
-     would just double it.
+  /* Sections carry no box, so every h2 draws its own hairline -- including the
+     first, which means the wrapper drops the duplicate rule above it.
 
      Wrapped in :global() because .case-section is rendered by Section.astro and
      carries that component's scope id -- scoped here, this selector would be
      rewritten to expect a class this component never renders, and never match. */
   :global(.prose:has(.case-section)) {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* ...and the first section is the one that sits against the header, so it is
+     the only one that drops its own rule. */
+  :global(.prose:has(.case-section) .case-section:first-child > h2) {
+    margin-top: 0;
     border-top: 0;
     padding-top: 0;
   }

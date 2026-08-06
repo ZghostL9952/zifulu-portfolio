@@ -18,6 +18,8 @@ draft: false
 
 import Section from '../../components/Section.astro';
 import Split from '../../components/Split.astro';
+import Carousel from '../../components/Carousel.astro';
+import Slide from '../../components/Slide.astro';
 
 import oldScreen from '../../assets/sportsexcitement/old-screen.png';
 import competitiveAnalysis from '../../assets/sportsexcitement/competitive-analysis.png';
@@ -97,7 +99,9 @@ treat them as an afterthought.
 
 ## The design
 
-<Split img={signup1} alt="Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.">
+<Carousel label="Three changes to the design">
+
+<Slide img={signup1} alt="Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.">
 
 ### Cut sign-up to the minimum.
 
@@ -105,18 +109,18 @@ Email, password, country, first and last
 name, date of birth, zip code, and terms. Seven fields, split across two
 screens so neither one feels long.
 
-</Split>
+</Slide>
 
-<Split img={signup3} alt="Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.">
+<Slide img={signup3} alt="Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.">
 
 ### Added email verification.
 
 Account security, and it matches what all
 three competitors do.
 
-</Split>
+</Slide>
 
-<Split>
+<Slide>
 
 ### Moved role assignment to the home screen.
 
@@ -145,27 +149,13 @@ A "Let's get started" menu with three options:
   </figure>
 </Fragment>
 
-</Split>
+</Slide>
+
+</Carousel>
 
 GameChanger proved action-based assignment works, but it only offers two paths: find a team or create one. A parent has to pick the athlete path and then
 correct it later. Adding "Add my child" as a first-class option is the
 direct fix for the gap we found in all three apps.
-
-</Section>
-
-<Section>
-
-## The new sign-up screens
-
-Left to right, the order a new user meets them.
-
-![Step 1 of 2, Create Account: email address, password, and country, with Continue with Google and Continue with Apple below.](../../assets/sportsexcitement/signup-1.png)
-![The country picker, a searchable list with United States selected.](../../assets/sportsexcitement/signup-2.png)
-![Check your email: six single-digit boxes for the verification code, with a resend link and a 59-second expiry.](../../assets/sportsexcitement/signup-3.png)
-![Account verified, confirming the email address, with a Continue to sign up button.](../../assets/sportsexcitement/signup-4.png)
-![Step 2 of 2, Almost There: first and last name, date of birth, address, and a terms checkbox, with both progress dots now complete.](../../assets/sportsexcitement/signup-5.png)
-![Welcome to SPEX, confirming the account was created, with a What's next list and a Get Started button.](../../assets/sportsexcitement/splash.png)
-![The Community Hub home screen with the Let's get started sheet raised over it, offering Join a team, Add my child, and Create a team.](../../assets/sportsexcitement/actionnudge.png)
 
 </Section>
 

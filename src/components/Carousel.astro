@@ -1,0 +1,232 @@
+---
+/**
+ * A scroll-snap carousel. Children should be <Slide> components.
+ *
+ * The track is a real horizontally scrolling element, so with no JavaScript at
+ * all it still works: you can swipe it, and it is focusable and arrow-key
+ * scrollable. The script only adds the buttons, the dots, and the entrance
+ * transition on top of that.
+ *
+ * It never auto-advances. Nothing moves unless the reader asks it to.
+ */
+interface Props {
+  /** Accessible name for the carousel as a whole. */
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section class="carousel" aria-roledescription="carousel" aria-label={label} data-carousel>
+  <div class="carousel-track" tabindex="0" role="group" aria-label={`${label}, scrollable`} data-carousel-track>
+    <slot />
+  </div>
+
+  {/* Hidden until the script wires them up, so they are never dead controls. */}
+  <div class="carousel-controls" hidden data-carousel-controls>
+    <button type="button" class="carousel-btn" aria-label="Previous slide" data-carousel-prev>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+
+    <ol class="carousel-dots" data-carousel-dots></ol>
+
+    <button type="button" class="carousel-btn" aria-label="Next slide" data-carousel-next>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .carousel {
+    margin: 1.75rem 0 2rem;
+  }
+
+  .carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    /* global.css forces this to `auto` under prefers-reduced-motion. */
+    scroll-behavior: smooth;
+    /* The snapped slide is the only one meant to be read, so the scrollbar is
+       noise here -- the dots report position instead. */
+    scrollbar-width: none;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .carousel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 44px, per the tap-target minimum. */
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .carousel-btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .carousel-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .carousel-btn:disabled {
+    color: var(--ink-muted);
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .carousel-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .carousel-dots :global(button) {
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border: 1px solid var(--ink-muted);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  /* Current dot differs by fill AND by size, not by color alone. */
+  .carousel-dots :global(button[aria-current='true']) {
+    width: 0.6875rem;
+    height: 0.6875rem;
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  /* The dots duplicate the buttons, which are the real control. On a touch
+     screen you swipe, so keep them as position readout only. */
+  @media (max-width: 899px) {
+    .carousel-controls {
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  for (const carousel of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
+    const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
+    const controls = carousel.querySelector<HTMLElement>('[data-carousel-controls]');
+    const dotList = carousel.querySelector<HTMLElement>('[data-carousel-dots]');
+    const prev = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+
+    if (!track || !controls || !dotList || !prev || !next) continue;
+
+    const slides = Array.from(track.querySelectorAll<HTMLElement>('.slide'));
+    if (slides.length < 2) continue;
+
+    // Marks the transition and active-slide styling as safe to apply.
+    carousel.dataset.enhanced = '';
+    controls.hidden = false;
+
+    const dots = slides.map((slide, i) => {
+      slide.setAttribute('aria-label', `Slide ${i + 1} of ${slides.length}`);
+
+      const li = document.createElement('li');
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      li.append(dot);
+      dotList.append(li);
+      return dot;
+    });
+
+    let current = 0;
+
+    const goTo = (index: number) => {
+      const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
+      track.scrollTo({
+        left: target.offsetLeft - track.offsetLeft,
+        behavior: reduceMotion.matches ? 'auto' : 'smooth',
+      });
+    };
+
+    const render = () => {
+      // Whichever slide's left edge is nearest the track's scroll position.
+      let nearest = 0;
+      let best = Infinity;
+      for (const [i, slide] of slides.entries()) {
+        const distance = Math.abs(slide.offsetLeft - track.offsetLeft - track.scrollLeft);
+        if (distance < best) {
+          best = distance;
+          nearest = i;
+        }
+      }
+
+      current = nearest;
+
+      for (const [i, slide] of slides.entries()) {
+        slide.toggleAttribute('data-active', i === current);
+        // Off-screen slides are not reachable, so keep them out of the tab order.
+        slide.inert = i !== current;
+      }
+
+      for (const [i, dot] of dots.entries()) {
+        if (i === current) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      }
+
+      prev.disabled = current === 0;
+      next.disabled = current === slides.length - 1;
+    };
+
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        render();
+      });
+    };
+
+    prev.addEventListener('click', () => goTo(current - 1));
+    next.addEventListener('click', () => goTo(current + 1));
+    track.addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+
+    render();
+  }
+</script>
