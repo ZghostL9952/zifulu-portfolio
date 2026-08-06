@@ -14,10 +14,25 @@ import { parseHitAreas } from '../lib/shelf';
  * any container size, so no coordinate maths is involved.
  */
 
-// The artwork's canvas is 2400x1799 but the shelves end at y=1372, so the frame
-// crops the empty band below rather than the bottom row of books. The extra
-// headroom above the top shelf also gives the lift somewhere to go.
-const VIEW_HEIGHT = 1400;
+/**
+ * The hit-area export does not sit on the same origin as the artwork export:
+ * the shapes land 142 units low and 57 units left of the books they belong to.
+ *
+ * Measured, not guessed. Detecting the three shelf planks in the WebP and
+ * comparing them to the median book-bottom of each hit row gives a vertical
+ * scale of 1.0036 -- i.e. no scaling, pure translation -- with residuals under
+ * 0.2px across all three shelves. Left and right edges of rows 1 and 3 agree on
+ * the horizontal figure to within 4 units.
+ *
+ * Re-verify after any Figma re-export; this is the second thing an export can
+ * silently change, after the layer ids.
+ */
+const OFFSET_X = 57;
+const OFFSET_Y = -142;
+
+// Artwork content runs to y=1253 (alpha bounding box), so the frame crops just
+// below that rather than carrying the empty band down to 1799.
+const VIEW_HEIGHT = 1280;
 
 const slots = parseHitAreas(shelfSvg);
 
@@ -47,7 +62,12 @@ if (bookBySlot.size !== books.length) {
 <section class="shelf" aria-labelledby="shelf-heading">
   <h2 id="shelf-heading" class="sr-only">Bookshelf</h2>
 
-  <div class="shelf-frame">
+  {/*
+    The frame's aspect ratio is derived from VIEW_HEIGHT rather than written out
+    again. If the two disagree, the image and the overlay crop differently and
+    every hit shape drifts.
+  */}
+  <div class="shelf-frame" style={`--shelf-view-height: ${VIEW_HEIGHT};`}>
     <img
       class="shelf-art"
       src="/img/shelf-full.webp"
@@ -64,7 +84,9 @@ if (bookBySlot.size !== books.length) {
       role="group"
       aria-label="Books and case studies on the shelf"
     >
-      {
+      {/* One correction for the whole overlay, rather than baked into each shape. */}
+      <g transform={`translate(${OFFSET_X} ${OFFSET_Y})`}>
+        {
         slots.map((slot) => {
           const book = slot.kind === 'book' ? bookBySlot.get(slot.id) : undefined;
           const study = slot.kind === 'case' ? studyBySlot.get(slot.id) : undefined;
@@ -111,8 +133,9 @@ if (bookBySlot.size !== books.length) {
               {shape}
             </g>
           );
-        })
-      }
+          })
+        }
+      </g>
     </svg>
   </div>
 
@@ -132,7 +155,7 @@ if (bookBySlot.size !== books.length) {
   .shelf-frame {
     position: relative;
     width: 100%;
-    aspect-ratio: 2400 / 1400;
+    aspect-ratio: 2400 / var(--shelf-view-height);
     overflow: hidden;
   }
 
