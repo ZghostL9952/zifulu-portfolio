@@ -1,0 +1,412 @@
+---
+import { getCollection } from 'astro:content';
+import shelfSvg from '../assets/shelf-hitareas.svg?raw';
+import books from '../data/books.json';
+import { parseHitAreas, fitSpineText } from '../lib/shelf';
+
+/**
+ * The illustration is one flat WebP. Everything interactive lives in an
+ * invisible SVG overlay generated from the Figma hit-area export.
+ *
+ * Alignment is guaranteed rather than calculated: the image uses
+ * object-position:top with object-fit:cover, and the SVG uses the exact
+ * equivalent, preserveAspectRatio="xMidYMin slice". Both crop identically at
+ * any container size, so no coordinate maths is involved.
+ */
+
+// Spine text is 13px at the smallest desktop rendering, which is the floor
+// CLAUDE.md sets. 2400 user units across a ~896px column is a 0.373 scale, so
+// 35 units lands just over 13px.
+const SPINE_FONT_SIZE = 35;
+
+// The artwork's canvas is 2400x1799 but the shelves end at y=1372, so the frame
+// crops the empty band below rather than the bottom row of books.
+const VIEW_HEIGHT = 1400;
+
+const slots = parseHitAreas(shelfSvg);
+
+const studies = await getCollection('work', ({ data }) => !data.draft);
+
+const bookBySlot = new Map(books.map((book) => [book.slot, book]));
+const studyBySlot = new Map(
+  studies.filter((study) => study.data.slot).map((study) => [study.data.slot!, study])
+);
+
+// Build-time sanity check. A typo'd slot is otherwise silent: the entry simply
+// never appears on the shelf, which is hard to notice among 58 spines.
+const known = new Set(slots.map((slot) => slot.id));
+for (const [slot, source] of [
+  ...[...bookBySlot.keys()].map((s) => [s, 'books.json'] as const),
+  ...[...studyBySlot.keys()].map((s) => [s, 'a case study'] as const),
+]) {
+  if (!known.has(slot)) {
+    console.warn(`[bookshelf] ${source} references slot "${slot}", which the shelf SVG has no shape for.`);
+  }
+}
+if (bookBySlot.size !== books.length) {
+  console.warn('[bookshelf] books.json has more than one entry per slot; later entries win.');
+}
+---
+
+<section class="shelf" aria-labelledby="shelf-heading">
+  <h2 id="shelf-heading" class="sr-only">Bookshelf</h2>
+
+  <div class="shelf-frame">
+    <img
+      class="shelf-art"
+      src="/img/shelf-full.webp"
+      width="2400"
+      height="1799"
+      alt="An illustrated bookshelf: three wooden shelves holding colourful books, storage boxes, and a potted plant."
+      fetchpriority="high"
+    />
+
+    <svg
+      class="shelf-overlay"
+      viewBox={`0 0 2400 ${VIEW_HEIGHT}`}
+      preserveAspectRatio="xMidYMin slice"
+      role="group"
+      aria-label="Books and case studies on the shelf"
+    >
+      {
+        slots.map((slot) => {
+          const book = slot.kind === 'book' ? bookBySlot.get(slot.id) : undefined;
+          const study = slot.kind === 'case' ? studyBySlot.get(slot.id) : undefined;
+          if (!book && !study) return null;
+
+          // Centre of the rect in the group's own coordinates.
+          const cx = slot.x + slot.width / 2;
+          const cy = slot.y + slot.height / 2;
+
+          // The group carries the shape's transform so the title shares it, per
+          // CLAUDE.md. Inside a mirrored group text renders backwards, so it is
+          // flipped back. Book spines are narrow and upright so their titles
+          // stand on end; case slots are landscape boxes, so theirs stay level.
+          const textTransform = [
+            `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`,
+            slot.mirrored ? 'scale(-1 1)' : '',
+            book ? 'rotate(-90)' : '',
+          ]
+            .filter(Boolean)
+            .join(' ');
+
+          const label = book
+            ? `${book.title} by ${book.author}`
+            : `${study!.data.title}, case study`;
+
+          // Whichever edge the text runs along is the character budget.
+          const spine = book
+            ? fitSpineText(book.title, slot.height, SPINE_FONT_SIZE)
+            : fitSpineText(study!.data.title, slot.width, SPINE_FONT_SIZE);
+
+          const data = {
+            'data-slot': slot.id,
+            'data-kind': slot.kind,
+            'data-title': book ? book.title : study!.data.title,
+            'data-sub': book ? book.author : study!.data.role.join(', '),
+            'data-status': book ? book.status : '',
+          };
+
+          const shape = (
+            <>
+              <rect
+                class="shelf-hit"
+                x={slot.x}
+                y={slot.y}
+                width={slot.width}
+                height={slot.height}
+                vector-effect="non-scaling-stroke"
+              />
+              {/* Spine text is SVG, not an HTML overlay, and shares the group's
+                  transform so it leans with the books that lean. */}
+              <text class="shelf-spine" transform={textTransform} font-size={SPINE_FONT_SIZE}>
+                {spine}
+              </text>
+            </>
+          );
+
+          return study ? (
+            <a
+              class="shelf-slot"
+              href={`/work/${study.id}`}
+              transform={slot.transform ?? undefined}
+              aria-label={label}
+              {...data}
+            >
+              {shape}
+            </a>
+          ) : (
+            <g
+              class="shelf-slot"
+              transform={slot.transform ?? undefined}
+              tabindex="0"
+              role="img"
+              aria-label={label}
+              {...data}
+            >
+              {shape}
+            </g>
+          );
+        })
+      }
+    </svg>
+  </div>
+
+  {/*
+    One panel, reused. aria-hidden because it duplicates the accessible name
+    already on the shape -- announcing it twice is worse than not at all.
+  */}
+  <div class="shelf-panel" data-shelf-panel hidden aria-hidden="true">
+    <p class="shelf-panel-title" data-panel-title></p>
+    <p class="shelf-panel-sub" data-panel-sub></p>
+    <span class="shelf-panel-pill" data-panel-pill hidden></span>
+    <span class="shelf-panel-cta" data-panel-cta hidden>View case study &rarr;</span>
+  </div>
+</section>
+
+<style>
+  .shelf-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2400 / 1400;
+    overflow: hidden;
+  }
+
+  .shelf-art,
+  .shelf-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .shelf-art {
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* Only the hit shapes take pointer events; the rest of the overlay lets
+     clicks through to the page. */
+  .shelf-overlay {
+    pointer-events: none;
+  }
+
+  .shelf-slot {
+    pointer-events: auto;
+    outline: none;
+  }
+
+  .shelf-hit {
+    fill: #ffffff;
+    fill-opacity: 0;
+    stroke: transparent;
+    stroke-width: 1.5;
+    pointer-events: all;
+    transition:
+      fill-opacity 120ms ease,
+      stroke 120ms ease;
+  }
+
+  /* Both signals, not one: a white scrim over the spine AND an accent stroke on
+     the hit shape. Hover behaviour has to fire on focus too. */
+  .shelf-slot:hover .shelf-hit,
+  .shelf-slot:focus-visible .shelf-hit {
+    fill-opacity: 0.12;
+    stroke: var(--accent);
+  }
+
+  /* The focus ring proper. Drawn as a second stroke on the same shape because
+     `outline` on SVG children is unreliable across browsers. */
+  .shelf-slot:focus-visible .shelf-hit {
+    stroke: var(--accent);
+    stroke-width: 3;
+  }
+
+  .shelf-spine {
+    fill: #ffffff;
+    /* Spines are every colour in the illustration, so the label carries its own
+       contrast rather than assuming a background. */
+    stroke: rgb(26 26 24 / 0.55);
+    stroke-width: 4;
+    paint-order: stroke;
+    stroke-linejoin: round;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+
+  /* Floating panel. Fixed, so it is positioned from the shape's viewport rect
+     and can never be clipped by the frame's overflow. */
+  .shelf-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    max-width: 15rem;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: 0 4px 16px rgb(26 26 24 / 0.1);
+    pointer-events: none;
+  }
+
+  .shelf-panel[hidden] {
+    display: none;
+  }
+
+  .shelf-panel-title {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .shelf-panel-sub {
+    margin: 2px 0 0;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--ink-muted);
+  }
+
+  .shelf-panel-pill {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .shelf-panel-cta {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .shelf-panel-pill[hidden],
+  .shelf-panel-cta[hidden] {
+    display: none;
+  }
+
+  /*
+    Below the desktop breakpoint the overlay is removed entirely, which also
+    takes it out of the tab order. The narrowest spine is 29 user units; making
+    it a 44px tap target needs a 1.5x scale, which is a different layout, not a
+    media query. That treatment is still to build -- until then mobile gets the
+    illustration on its own rather than targets too small to hit.
+  */
+  @media (max-width: 1023px) {
+    .shelf-overlay {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const panel = document.querySelector<HTMLElement>('[data-shelf-panel]');
+  const slots = Array.from(document.querySelectorAll<SVGElement>('.shelf-slot'));
+
+  if (panel && slots.length > 0) {
+    const title = panel.querySelector<HTMLElement>('[data-panel-title]')!;
+    const sub = panel.querySelector<HTMLElement>('[data-panel-sub]')!;
+    const pill = panel.querySelector<HTMLElement>('[data-panel-pill]')!;
+    const cta = panel.querySelector<HTMLElement>('[data-panel-cta]')!;
+
+    // No hover state exists on touch, so the panel is pointer-driven only where
+    // there is a real pointer. Focus still opens it everywhere.
+    const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+
+    let current: SVGElement | null = null;
+    let showTimer: number | undefined;
+    let hideTimer: number | undefined;
+
+    const place = (el: SVGElement) => {
+      const rect = el.getBoundingClientRect();
+      const box = panel.getBoundingClientRect();
+      const margin = 16;
+
+      // Anchored to the top centre of the hit shape, then shifted back inside
+      // the viewport rather than allowed to clip.
+      let left = rect.left + rect.width / 2 - box.width / 2;
+      left = Math.min(Math.max(margin, left), innerWidth - box.width - margin);
+
+      // Flips below the shape when there is no room above it.
+      let top = rect.top - box.height - 10;
+      if (top < margin) top = rect.bottom + 10;
+
+      panel.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+    };
+
+    const open = (el: SVGElement) => {
+      title.textContent = el.dataset.title ?? '';
+      sub.textContent = el.dataset.sub ?? '';
+
+      const isBook = el.dataset.kind === 'book';
+      pill.hidden = !isBook;
+      cta.hidden = isBook;
+      if (isBook) {
+        pill.textContent = el.dataset.status === 'reading' ? 'Reading' : 'Read';
+      }
+
+      panel.hidden = false;
+      current = el;
+      place(el);
+    };
+
+    const close = () => {
+      panel.hidden = true;
+      current = null;
+    };
+
+    // 80ms in, 150ms out, so crossing several spines does not flicker.
+    const scheduleOpen = (el: SVGElement) => {
+      clearTimeout(hideTimer);
+      clearTimeout(showTimer);
+      showTimer = window.setTimeout(() => open(el), 80);
+    };
+
+    const scheduleClose = () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(close, 150);
+    };
+
+    for (const slot of slots) {
+      slot.addEventListener('focus', () => open(slot));
+      slot.addEventListener('blur', scheduleClose);
+
+      if (finePointer.matches) {
+        slot.addEventListener('mouseenter', () => scheduleOpen(slot));
+        slot.addEventListener('mouseleave', scheduleClose);
+      }
+    }
+
+    addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && current) {
+        close();
+        // Focus stays put; only the visual panel is dismissed.
+      }
+    });
+
+    // The panel is fixed but the shape scrolls, so it has to follow.
+    let queued = false;
+    const reposition = () => {
+      if (!current || queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        if (current) place(current);
+      });
+    };
+
+    addEventListener('scroll', reposition, { passive: true });
+    addEventListener('resize', reposition, { passive: true });
+  }
+</script>

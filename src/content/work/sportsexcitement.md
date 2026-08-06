@@ -13,6 +13,7 @@ tools:
   - Figma Make
   - Claude
 thumbnail: ../../assets/sportsexcitement/sports-logo-mark.png
+slot: case-02
 order: 2
 draft: false
 ---
@@ -32,7 +33,21 @@ longer your sign-up process is, before you'd seen anything the app does.
 
 👉 So, I was tasked was with redesigning the sign-up flow so users reach the app faster.
 
-## We studied three competitors
+## Redesigning the user-flow, not just screens
+
+Cutting fields meant rebuilding the flow. Every field I removed had to land somewhere else. I redrew the user flow from scratch collaborating with the TeamsHub designers. We thought through where verification process and role-assignment could land.
+
+The result was three separate path after sign up, when user enters the app. Each action they choose automatically "assigns" them a role, implicitly.
+
+![a user flow diagram](/src/assets/sportsexcitement/user-flow.png)
+
+### How I went about reducing fields
+
+I listed every field in the old sign-up and mapped it onto a Venn diagram, color-coded by must-have, should-have, nice-to-have, and not have, through conversations with the Product Manager and the Software Engineer. The PM knew which fields the business needed. The engineer knew which ones were needed for algorithm.
+
+![a venn diagram with 3 circles, color coded by neccessity for sign up fields](/src/assets/sportsexcitement/venn-diagram.png)
+
+### How I decided on action-based role assignment
 
 I ran a competitive analysis with the UX researcher on the team. We
 tested TeamSnap One (30M users), GameChanger (9M), and SportsEngine
@@ -67,14 +82,14 @@ treat them as an afterthought.
 <div class="cols-2">
 <div>
 
-### Cut sign-up to the minimum.
+### 1. Cut sign-up to the minimum.
 
 After confirming with the Product and Development team, these fields were the must-kept: email, password, country, first and last name, date of birth, zip code, and terms. Seven fields, split across two screens.
 
 </div>
 <div>
 
-### Added email verification.
+### 2. Added email verification.
 
 Account security, and it matches what all three competitors do.
 
@@ -86,7 +101,7 @@ Account security, and it matches what all three competitors do.
 <div class="with-media">
 <div>
 
-### Moved role assignment to the home screen.
+### 3. Moved role assignment to the home screen.
 
 A "Let's get started" menu with three options:
 
@@ -121,20 +136,21 @@ direct fix for the gap we found in all three apps.
 
 ## Working with AI
 
-I used Claude and Figma Make to move fast, including copy
-variants, edge cases I'd have missed alone. Figma Make turned an idea
-into a screen in minutes.
+I did the thinking. AI assisted the production.
 
-The screens looked finished but couldn't justify themselves. Clean
-layout had no answer to why any of it was that way.
+Claude helped me generate stress-test edge cases against the role logic. Figma Make helped turn an low-fidelity sketch into a screen in minutes. Working solo on a flow this branchy, that saved real time.
 
-So I split the work. AI for breadth, the reasoning stayed mine.
+But the output only looked right. Figma Make gave me clean spacing and sensible hierarchy; and field orders that made no sense. It would ask for a zip code before a name, or split related fields across screens for no reason. The visual polish was fine, but not the logic.
 
-## What shipped
+That's the trap. A finished-looking screen reads as a settled decision, so you stop questioning it.
 
-**Sign-up went from 15+ fields to 7, across two screens.**
+So AI stayed supplementary. Good for breadth, such as brainstorming drafts of screens and edge cases I missed. Not good at knowing which one is right. In the final design, every screen that survived had to pass me explaining the reasoning outloud.
 
-I handed off the final design to the design team and the development team, documenting edge cases and haptics. The feature is still in implementation and user testing phase before my internship ended. New designers picked up my work and continued designing user verification screens.
+## Result
+
+**A straightforward, short sign-up**
+
+I handed off the final design to the design team and the engineer team, documenting edge cases and haptics. The feature is still in implementation and user testing phase.
 
 ---
 

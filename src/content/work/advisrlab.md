@@ -16,6 +16,7 @@ tools:
   - Miro
   - Claude
 thumbnail: ../../assets/advisrlab/advisrlab-logo.png
+slot: case-01
 order: 1
 draft: false
 ---
