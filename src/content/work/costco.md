@@ -56,6 +56,8 @@ under the wrong parent, and slices too narrow for anyone to browse by.
 
 Further justified by psychological principals.
 
+<div data-card-for="controlled-vocab">
+
 > **Hick's Law**
 >
 > Decision time grows with the number and complexity of the choices on offer.
@@ -69,13 +71,19 @@ Further justified by psychological principals.
 >
 > Seventeen categories isn't a list anymore, it's a wall.
 
+</div>
+
 ### The new "Shop By Category"
+
+<div data-card-for="new-category">
 
 > **Miller's Law, again**
 >
 > Chunking. Twelve icons in a grid read as one group.
 >
 > Twelve text links in a column read as twelve separate decisions.
+
+</div>
 
 <div class="compare compare--stack">
 <figure>
@@ -116,11 +124,15 @@ answer "is this the one?" before it answers anything else.
 
 Suggestions arrive pre-sorted instead of as a flat list.
 
+<div data-card-for="new-search">
+
 > **Gestalt Proximity**
 >
 > Things placed near each other are read as one group.
 >
 > Grouping does the filtering, so the user doesn't have to.
+
+</div>
 
 <div class="compare">
 <figure>

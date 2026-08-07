@@ -314,6 +314,12 @@ const facts = [
      A shadow appears only here -- over artwork the card needs to separate
      from what is behind it, which is not true in the margin.
      ------------------------------------------------------------------ */
+  /* Pairing wrapper. No box of its own, so the cards inside still float and
+     stack as direct children of the prose column. */
+  .prose :global([data-card-for]) {
+    display: contents;
+  }
+
   .prose :global(.has-cards) {
     position: relative;
     cursor: pointer;
@@ -810,7 +816,7 @@ const facts = [
   // Setting [data-cards] is what arms the hidden state, so a script that never
   // runs leaves every card visible rather than blank.
   const prose = document.querySelector<HTMLElement>('.prose');
-  const cards = prose ? Array.from(prose.querySelectorAll<HTMLElement>(':scope > blockquote')) : [];
+  const cards = prose ? Array.from(prose.querySelectorAll<HTMLElement>('blockquote')) : [];
 
   if (prose && cards.length > 0) {
     prose.dataset.cards = '';
@@ -821,10 +827,37 @@ const facts = [
       cards.map((card) => [card, { parent: card.parentNode!, next: card.nextSibling }])
     );
 
-    /** The image this card belongs to: the nearest one in its own section. */
+    /** The top-level prose child a card sits under, wrapper or not. */
+    const topLevel = (el: HTMLElement): HTMLElement => {
+      let node = el;
+      while (node.parentElement && node.parentElement !== prose) node = node.parentElement;
+      return node;
+    };
+
+    /**
+     * The image a card belongs to.
+     *
+     * Explicit wins: wrap a card in `<div data-card-for="controlled-vocab">`
+     * and it pairs with the block holding that image, wherever that block is.
+     * Proximity cannot work this out on its own -- two cards can sit between
+     * the image they explain and the one they do not.
+     *
+     * With no wrapper it falls back to the nearest image in the same section,
+     * looking backwards first, since a card usually comments on what you have
+     * just been shown.
+     */
     const imageFor = (card: HTMLElement): HTMLElement | null => {
-      for (const dir of ['nextElementSibling', 'previousElementSibling'] as const) {
-        let node = card[dir] as HTMLElement | null;
+      const token = (card.parentElement as HTMLElement | null)?.dataset.cardFor;
+      if (token) {
+        const match = Array.from(prose.children).find((child) =>
+          child.querySelector(`img[src*="${token}"]`)
+        );
+        if (match) return match as HTMLElement;
+      }
+
+      const start = topLevel(card);
+      for (const dir of ['previousElementSibling', 'nextElementSibling'] as const) {
+        let node = start[dir] as HTMLElement | null;
         while (node) {
           // Never pair across a section boundary.
           if (node.tagName === 'H2') break;
@@ -833,6 +866,17 @@ const facts = [
         }
       }
       return null;
+    };
+
+    /** Cards grouped by the image they belong to, in document order. */
+    const groupByImage = () => {
+      const groups = new Map<HTMLElement, HTMLElement[]>();
+      for (const card of cards) {
+        const host = imageFor(card);
+        if (!host) continue;
+        groups.set(host, [...(groups.get(host) ?? []), card]);
+      }
+      return groups;
     };
 
     const wide = matchMedia('(min-width: 1280px)');
@@ -872,30 +916,35 @@ const facts = [
     };
 
     const setupMargin = () => {
-      // A band across the middle of the viewport: a card shows while its
-      // passage is in the centre of vision, and hides once it has passed.
+      const groups = groupByImage();
+      // Watch the image, not the card: a card shows while the thing it
+      // explains is in the middle of vision, and hides once you scroll past.
+      const watched = new Map<Element, HTMLElement[]>(groups);
+
       observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            entry.target.toggleAttribute('data-visible', entry.isIntersecting);
+            for (const card of watched.get(entry.target) ?? []) {
+              card.toggleAttribute('data-visible', entry.isIntersecting);
+            }
           }
         },
         { rootMargin: '-42% 0px -42% 0px', threshold: 0 }
       );
 
-      for (const card of cards) observer.observe(card);
+      for (const host of watched.keys()) observer.observe(host);
+
+      // A card with no image of its own falls back to watching itself.
+      const paired = new Set([...groups.values()].flat());
+      for (const card of cards) {
+        if (paired.has(card)) continue;
+        watched.set(card, [card]);
+        observer.observe(card);
+      }
     };
 
     const setupOverlay = () => {
-      // Several cards can belong to one image, so group before building.
-      const grouped = new Map<HTMLElement, HTMLElement[]>();
-      for (const card of cards) {
-        const host = imageFor(card);
-        if (!host) continue;
-        grouped.set(host, [...(grouped.get(host) ?? []), card]);
-      }
-
-      for (const [host, group] of grouped) {
+      for (const [host, group] of groupByImage()) {
         const overlay = document.createElement('div');
         overlay.className = 'card-overlay';
         for (const card of group) overlay.append(card);
