@@ -8,6 +8,7 @@ role:
   - User research
   - Prompt Engineering
   - Roadmap
+company: UW iSchool
 team: 5 people
 timeline: Jan 2025 – May 2026
 tools:
@@ -16,8 +17,8 @@ tools:
   - Miro
   - Claude
 thumbnail: ../../assets/advisrlab/advisrlab-logo.png
-slot: case-01
-order: 1
+slot: case-02
+order: 2
 draft: false
 ---
 

@@ -13,8 +13,8 @@ tools:
   - Figma Make
   - Claude
 thumbnail: ../../assets/sportsexcitement/sports-logo-mark.png
-slot: case-02
-order: 2
+slot: case-01
+order: 1
 draft: false
 ---
 
