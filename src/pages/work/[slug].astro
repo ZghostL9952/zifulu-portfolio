@@ -837,24 +837,32 @@ const facts = [
     };
 
     /**
-     * The image a card belongs to.
+     * The image a card belongs to, resolved as two elements:
      *
-     * Explicit wins: wrap a card in `<div data-card-for="controlled-vocab">`
-     * and it pairs with the block holding that image, wherever that block is.
-     * Proximity cannot work this out on its own -- two cards can sit between
-     * the image they explain and the one they do not.
+     *   block  - the top-level prose child. A float has to be inserted here,
+     *            because inside the comparison grid a blockquote would become
+     *            a grid item and its float would simply be ignored.
+     *   target - the exact thing to sit level with. Inside a comparison that is
+     *            one <figure>, not the pair, so "next to new-category" means
+     *            the After panel rather than the top of the block.
+     *
+     * Explicit wins: wrap a card in `<div data-card-for="new-category">` and it
+     * pairs with whatever holds that image. Proximity cannot work this out on
+     * its own -- two cards can sit between the image they explain and the one
+     * they do not.
      *
      * With no wrapper it falls back to the nearest image in the same section,
      * looking backwards first, since a card usually comments on what you have
      * just been shown.
      */
-    const imageFor = (card: HTMLElement): HTMLElement | null => {
+    const pairFor = (card: HTMLElement): { block: HTMLElement; target: HTMLElement } | null => {
       const token = (card.parentElement as HTMLElement | null)?.dataset.cardFor;
       if (token) {
-        const match = Array.from(prose.children).find((child) =>
-          child.querySelector(`img[src*="${token}"]`)
-        );
-        if (match) return match as HTMLElement;
+        const img = prose.querySelector<HTMLElement>(`img[src*="${token}"]`);
+        if (img) {
+          const block = topLevel(img);
+          return { block, target: img.closest('figure') ?? block };
+        }
       }
 
       const start = topLevel(card);
@@ -863,20 +871,22 @@ const facts = [
         while (node) {
           // Never pair across a section boundary.
           if (node.tagName === 'H2') break;
-          if (node.querySelector('img')) return node;
+          if (node.querySelector('img')) return { block: node, target: node };
           node = node[dir] as HTMLElement | null;
         }
       }
       return null;
     };
 
-    /** Cards grouped by the image they belong to, in document order. */
-    const groupByImage = () => {
-      const groups = new Map<HTMLElement, HTMLElement[]>();
+    /** Cards grouped by the exact element they sit beside, in document order. */
+    const groupByTarget = () => {
+      const groups = new Map<HTMLElement, { block: HTMLElement; group: HTMLElement[] }>();
       for (const card of cards) {
-        const host = imageFor(card);
-        if (!host) continue;
-        groups.set(host, [...(groups.get(host) ?? []), card]);
+        const pair = pairFor(card);
+        if (!pair) continue;
+        const entry = groups.get(pair.target) ?? { block: pair.block, group: [] };
+        entry.group.push(card);
+        groups.set(pair.target, entry);
       }
       return groups;
     };
@@ -885,6 +895,7 @@ const facts = [
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
     let observer: IntersectionObserver | null = null;
+    let realign: (() => void) | null = null;
     let openHost: HTMLElement | null = null;
     const hosts: HTMLElement[] = [];
 
@@ -898,6 +909,7 @@ const facts = [
     const teardown = () => {
       observer?.disconnect();
       observer = null;
+      realign = null;
       closeOpen();
 
       for (const host of hosts.splice(0)) {
@@ -914,24 +926,39 @@ const facts = [
         const spot = home.get(card)!;
         spot.parent.insertBefore(card, spot.next);
         card.removeAttribute('data-visible');
+        card.style.marginTop = '';
       }
     };
 
     const setupMargin = () => {
-      const groups = groupByImage();
+      const groups = groupByTarget();
 
-      // Move each card directly in front of its image. A right float takes its
+      // Move each card directly in front of its block. A right float takes its
       // vertical position from where it sits in the flow, so this is what puts
       // the card level with the image instead of level with the paragraph it
-      // happened to be written after. Because the float's margins cancel out it
-      // still occupies no width, so the image does not move.
-      for (const [host, group] of groups) {
-        for (const card of group) host.parentNode?.insertBefore(card, host);
+      // happened to be written after. The float's margins cancel out, so it
+      // still occupies no width and the image does not move.
+      for (const [, { block, group }] of groups) {
+        for (const card of group) block.parentNode?.insertBefore(card, block);
       }
 
-      // Watch the image, not the card: a card shows while the thing it
+      // When the target sits partway down its block -- the After panel of a
+      // stacked comparison -- close the gap with a top margin. Measured rather
+      // than assumed, because it depends on the panel above it.
+      realign = () => {
+        for (const [target, { block, group }] of groups) {
+          const shift = target.getBoundingClientRect().top - block.getBoundingClientRect().top;
+          // Only the first card offsets; the rest stack under it via `clear`.
+          group[0].style.marginTop = shift > 1 ? `${Math.round(shift)}px` : '';
+        }
+      };
+      realign();
+
+      // Watch the target, not the card: a card shows while the thing it
       // explains is in the middle of vision, and hides once you scroll past.
-      const watched = new Map<Element, HTMLElement[]>(groups);
+      const watched = new Map<Element, HTMLElement[]>(
+        [...groups].map(([target, { group }]) => [target, group])
+      );
 
       observer = new IntersectionObserver(
         (entries) => {
@@ -944,10 +971,10 @@ const facts = [
         { rootMargin: '-42% 0px -42% 0px', threshold: 0 }
       );
 
-      for (const host of watched.keys()) observer.observe(host);
+      for (const target of watched.keys()) observer.observe(target);
 
       // A card with no image of its own falls back to watching itself.
-      const paired = new Set([...groups.values()].flat());
+      const paired = new Set([...groups.values()].flatMap((entry) => entry.group));
       for (const card of cards) {
         if (paired.has(card)) continue;
         watched.set(card, [card]);
@@ -956,7 +983,9 @@ const facts = [
     };
 
     const setupOverlay = () => {
-      for (const [host, group] of groupByImage()) {
+      // Attaches to the target, so on a stacked comparison it is the After
+      // panel that carries the note rather than the whole pair.
+      for (const [host, { group }] of groupByTarget()) {
         const overlay = document.createElement('div');
         overlay.className = 'card-overlay';
         for (const card of group) overlay.append(card);
@@ -1012,6 +1041,22 @@ const facts = [
     addEventListener('keydown', (event) => {
       if (event.key === 'Escape') closeOpen();
     });
+
+    // The offset depends on the height of the panel above the target, so it has
+    // to be measured again whenever the column is resized.
+    let pending = false;
+    addEventListener(
+      'resize',
+      () => {
+        if (pending || !realign) return;
+        pending = true;
+        requestAnimationFrame(() => {
+          pending = false;
+          realign?.();
+        });
+      },
+      { passive: true }
+    );
   }
 
   // A looping autoplay is continuous motion, so a reduced-motion preference
