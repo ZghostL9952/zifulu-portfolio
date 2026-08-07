@@ -278,8 +278,10 @@ const facts = [
       clear: right;
       width: 14rem;
       max-width: none;
-      margin-left: 2rem;
-      margin-right: -16rem;
+      /* Top margin is zero so the card's top lines up with the top of the
+         image it is moved in front of. The bottom margin is the gap between
+         two cards that share one image. */
+      margin: 0 -16rem 1rem 2rem;
     }
   }
 
@@ -917,6 +919,16 @@ const facts = [
 
     const setupMargin = () => {
       const groups = groupByImage();
+
+      // Move each card directly in front of its image. A right float takes its
+      // vertical position from where it sits in the flow, so this is what puts
+      // the card level with the image instead of level with the paragraph it
+      // happened to be written after. Because the float's margins cancel out it
+      // still occupies no width, so the image does not move.
+      for (const [host, group] of groups) {
+        for (const card of group) host.parentNode?.insertBefore(card, host);
+      }
+
       // Watch the image, not the card: a card shows while the thing it
       // explains is in the middle of vision, and hides once you scroll past.
       const watched = new Map<Element, HTMLElement[]>(groups);
