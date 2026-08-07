@@ -56,17 +56,26 @@ under the wrong parent, and slices too narrow for anyone to browse by.
 
 Further justified by psychological principals.
 
-> **🧠 Hick's Law** — decision time grows with the number and complexity of
-> choices. The overlap was the real cost: users had to rule options out
-> before they could rule one in.
+> **Hick's Law**
+>
+> Decision time grows with the number and complexity of the choices on offer.
+>
+> The overlap was the real cost: users had to rule options out before they
+> could rule one in.
 
-> **🧠 Miller's Law** — people hold about seven items in working memory.
-> Seventeen isn't a list anymore, it's a wall.
+> **Miller's Law**
+>
+> The average person can only keep 7±2 items in their working memory.
+>
+> Seventeen categories isn't a list anymore, it's a wall.
 
 **We unified "Shop by Category' with new icons**
 
-> **🧠 Miller's Law again** — chunking. Twelve icons in a grid read as one
-> group. Twelve text links in a column read as twelve decisions.
+> **Miller's Law, again**
+>
+> Chunking. Twelve icons in a grid read as one group.
+>
+> Twelve text links in a column read as twelve separate decisions.
 
 <div class="compare">
 <figure>
@@ -107,8 +116,11 @@ answer "is this the one?" before it answers anything else.
 
 Suggestions arrive pre-sorted instead of as a flat list.
 
-> **🧠 Gestalt proximity** — things placed near each other read as one
-> group. Grouping does the filtering, so the user doesn't have to.
+> **Gestalt Proximity**
+>
+> Things placed near each other are read as one group.
+>
+> Grouping does the filtering, so the user doesn't have to.
 
 <div class="compare">
 <figure>
