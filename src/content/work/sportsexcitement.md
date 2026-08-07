@@ -39,13 +39,13 @@ Cutting fields meant rebuilding the flow. Every field I removed had to land some
 
 The result was three separate path after sign up, when user enters the app. Each action they choose automatically "assigns" them a role, implicitly.
 
-![a user flow diagram](/src/assets/sportsexcitement/user-flow.png)
+![The redesigned user flow. Sign-up leads into three separate paths once the user enters the app, and the action they choose assigns their role implicitly.](../../assets/sportsexcitement/user-flow.png)
 
 ### How I went about reducing fields
 
 I listed every field in the old sign-up and mapped it onto a Venn diagram, color-coded by must-have, should-have, nice-to-have, and not have, through conversations with the Product Manager and the Software Engineer. The PM knew which fields the business needed. The engineer knew which ones were needed for algorithm.
 
-![a venn diagram with 3 circles, color coded by neccessity for sign up fields](/src/assets/sportsexcitement/venn-diagram.png)
+![A Venn diagram of every field in the old sign-up, colour-coded by necessity: must-have, should-have, nice-to-have, and not needed.](../../assets/sportsexcitement/venn-diagram.png)
 
 ### How I decided on action-based role assignment
 
