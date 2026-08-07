@@ -240,14 +240,14 @@ const facts = [
 
      A card is just a blockquote whose first line is the law name -- the eyebrow
      is generated, so it never has to be retyped. */
-  /* Short lines, so the card is a tall rectangle rather than a wide one. At
-     ~30 characters it matches the reference's measure while needing barely
-     half the horizontal room -- which is what lets the margin treatment start
-     at 1280px instead of 1440px. */
+  /* Short lines, so the card is a tall rectangle rather than a wide one. About
+     24 characters. Narrower is not only the look -- the reserved margin is
+     sized to the card, so every rem taken off here goes back to the text
+     column rather than becoming empty page. */
   .prose :global(blockquote) {
     margin: 1.75rem 0;
-    max-width: 18rem;
-    padding: 1.25rem 1.375rem 1.375rem;
+    max-width: 14rem;
+    padding: 1.125rem 1.25rem 1.25rem;
     border: 0;
     border-radius: 18px;
     background-color: #f7f7f7;
@@ -262,36 +262,33 @@ const facts = [
      while keeping its vertical position beside the passage it belongs to.
      `clear` stops two consecutive cards sharing a line.
 
-     Budget: 79rem box less 3rem padding is 76rem. The grid takes
-     11 + 3 gap + 41 = 55rem, leaving 21rem for a card needing 20rem.
+     Budget: 78rem box less 3rem padding is 75rem. The grid takes
+     11 + 3 gap + 44 = 58rem, leaving 17rem for a card needing 16rem. The box
+     is sized to that sum, so the margin holds the card and nothing more.
      ------------------------------------------------------------------ */
   @media (min-width: 1280px) {
     .case-grid {
-      max-width: 79rem;
-      grid-template-columns: 11rem minmax(0, 41rem);
+      max-width: 78rem;
+      grid-template-columns: 11rem minmax(0, 44rem);
       justify-content: start;
     }
 
     .prose :global(blockquote) {
       float: right;
       clear: right;
-      width: 18rem;
+      width: 14rem;
       max-width: none;
       margin-left: 2rem;
-      margin-right: -20rem;
+      margin-right: -16rem;
     }
   }
 
-  /* Wide screens give the text column its full width back. */
+  /* Wide screens give the text column its full width back. The card and its
+     gutter stay at 16rem, so the extra room goes to the content. */
   @media (min-width: 1600px) {
     .case-grid {
-      max-width: 96rem;
+      max-width: 84rem;
       grid-template-columns: 11rem minmax(0, 50rem);
-    }
-
-    .prose :global(blockquote) {
-      width: 20rem;
-      margin-right: -22rem;
     }
   }
 
@@ -451,6 +448,14 @@ const facts = [
       grid-template-columns: 1fr 1fr;
       gap: 1.75rem;
       align-items: start;
+    }
+
+    /* Opt-out for comparisons whose detail does not survive being halved --
+       a dense grid of category tiles, say. One column means each image gets
+       the full text width, a little over twice the side-by-side size. */
+    .prose :global(.compare--stack) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
   }
 

@@ -42,7 +42,7 @@ I'm a psychology major as well as an informatics one, so I came at this as a cog
 
 ## What we changed
 
-### Cut 17 categories to 12
+### 1. Cut 17 categories to 12
 
 We defined a controlled vocabulary. One agreed label per concept, then
 cross-referenced it against Sam's Club's electronics taxonomy. Their
@@ -69,7 +69,7 @@ Further justified by psychological principals.
 >
 > Seventeen categories isn't a list anymore, it's a wall.
 
-**We unified "Shop by Category' with new icons**
+### The new "Shop By Category"
 
 > **Miller's Law, again**
 >
@@ -77,7 +77,7 @@ Further justified by psychological principals.
 >
 > Twelve text links in a column read as twelve separate decisions.
 
-<div class="compare">
+<div class="compare compare--stack">
 <figure>
 <figcaption>Before</figcaption>
 
