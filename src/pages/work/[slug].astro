@@ -240,53 +240,69 @@ const facts = [
 
      A card is just a blockquote whose first line is the law name -- the eyebrow
      is generated, so it never has to be retyped. */
+  /* Short lines, so the card is a tall rectangle rather than a wide one. At
+     ~30 characters it matches the reference's measure while needing barely
+     half the horizontal room -- which is what lets the margin treatment start
+     at 1280px instead of 1440px. */
   .prose :global(blockquote) {
     margin: 1.75rem 0;
-    /* Never the full column: a card is a card. */
-    max-width: 26rem;
-    padding: 1.25rem 1.5rem 1.375rem;
+    max-width: 18rem;
+    padding: 1.25rem 1.375rem 1.375rem;
     border: 0;
     border-radius: 18px;
     background-color: #f7f7f7;
     box-shadow: none;
   }
 
-  /* Cards move into the right margin once the page is wide enough to hold one.
+  /* ------------------------------------------------------------------
+     Margin cards, 1280px and up.
 
-     The float's own margins cancel out (24rem wide, +2 left, -26 right), so it
-     occupies zero width in the flow -- body text does not wrap around it -- but
-     keeps its vertical position beside the passage it belongs to. `clear`
-     stops two consecutive cards sharing a line. */
-  /* The budget, at this breakpoint: 88rem box, less 3rem of padding, is 85rem
-     of content. The grid takes 11 + 3 gap + 44 = 58rem, leaving 27rem. A card
-     needs 26rem (2rem gutter + 24rem wide), so it fits with 1rem to spare. */
-  @media (min-width: 1440px) {
+     The float's own margins cancel out (18rem wide, +2 left, -20 right), so
+     it occupies zero width in the flow -- body text does not wrap around it --
+     while keeping its vertical position beside the passage it belongs to.
+     `clear` stops two consecutive cards sharing a line.
+
+     Budget: 79rem box less 3rem padding is 76rem. The grid takes
+     11 + 3 gap + 41 = 55rem, leaving 21rem for a card needing 20rem.
+     ------------------------------------------------------------------ */
+  @media (min-width: 1280px) {
     .case-grid {
-      max-width: 88rem;
-      grid-template-columns: 11rem minmax(0, 44rem);
+      max-width: 79rem;
+      grid-template-columns: 11rem minmax(0, 41rem);
       justify-content: start;
     }
 
     .prose :global(blockquote) {
       float: right;
       clear: right;
-      width: 24rem;
+      width: 18rem;
       max-width: none;
-      margin-right: -26rem;
       margin-left: 2rem;
+      margin-right: -20rem;
     }
   }
 
-  /* Hidden until scrolled to, then eased in from the side.
+  /* Wide screens give the text column its full width back. */
+  @media (min-width: 1600px) {
+    .case-grid {
+      max-width: 96rem;
+      grid-template-columns: 11rem minmax(0, 50rem);
+    }
 
-     Gated on [data-cards], which the script sets: with no JavaScript the
-     attribute never appears and the cards are simply visible. */
+    .prose :global(blockquote) {
+      width: 20rem;
+      margin-right: -22rem;
+    }
+  }
+
+  /* Reveal. Gated on [data-cards], which the script sets, so with no
+     JavaScript the attribute never appears and the cards simply stay put. */
   .prose[data-cards] :global(blockquote) {
     opacity: 0;
-    transform: translateX(2rem);
+    transform: translateX(1.5rem);
     transition:
-      opacity 420ms ease,
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 380ms ease,
+      transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .prose[data-cards] :global(blockquote[data-visible]) {
@@ -294,12 +310,86 @@ const facts = [
     transform: none;
   }
 
+  /* ------------------------------------------------------------------
+     Below 1280px: tap the image, the card overlays it.
+
+     The overlay element is built by the script, so these have to be global.
+     A shadow appears only here -- over artwork the card needs to separate
+     from what is behind it, which is not true in the margin.
+     ------------------------------------------------------------------ */
+  .prose :global(.has-cards) {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .prose :global(.card-overlay) {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 220ms ease,
+      visibility 220ms;
+  }
+
+  .prose :global([data-cards-open] > .card-overlay) {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .prose :global(.card-overlay blockquote) {
+    width: 100%;
+    max-width: 20rem;
+    margin: 0;
+    opacity: 1;
+    transform: none;
+    box-shadow: 0 6px 24px rgb(26 26 24 / 0.22);
+  }
+
+  /* The affordance, so an image that does something looks like it. */
+  .prose :global(.has-cards)::after {
+    content: '🧠';
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    z-index: 1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    background: #f7f7f7;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    box-shadow: 0 2px 8px rgb(26 26 24 / 0.18);
+  }
+
+  .prose :global([data-cards-open])::after {
+    opacity: 0;
+  }
+
+  .prose :global(.has-cards:focus-visible) {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  /* CLAUDE.md: state changes instantly, no fades or transforms. */
   @media (prefers-reduced-motion: reduce) {
     .prose[data-cards] :global(blockquote),
-    .prose[data-cards] :global(blockquote[data-visible]) {
-      opacity: 1;
+    .prose[data-cards] :global(blockquote[data-visible]),
+    .prose :global(.card-overlay) {
       transform: none;
       transition: none;
+    }
+
+    .prose[data-cards] :global(blockquote[data-visible]) {
+      opacity: 1;
     }
   }
 
@@ -705,30 +795,157 @@ const facts = [
   addEventListener('resize', markScrollable, { passive: true });
   addEventListener('load', markScrollable);
 
-  // Psychology cards ease in as you reach the passage they sit beside. Setting
-  // [data-cards] here is what arms the hidden state, so a failed script leaves
-  // them visible rather than blank.
+  // Psychology cards.
+  //
+  // Wide screens: the card lives in the margin and appears only while its
+  // passage is in the middle of the viewport, fading again once you scroll on.
+  // Narrower screens: there is no margin to put it in, so the card overlays the
+  // image it belongs to and is opened by tapping that image.
+  //
+  // Setting [data-cards] is what arms the hidden state, so a script that never
+  // runs leaves every card visible rather than blank.
   const prose = document.querySelector<HTMLElement>('.prose');
-  const cards = prose ? Array.from(prose.querySelectorAll('blockquote')) : [];
+  const cards = prose ? Array.from(prose.querySelectorAll<HTMLElement>(':scope > blockquote')) : [];
 
   if (prose && cards.length > 0) {
     prose.dataset.cards = '';
 
-    const reveal = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          entry.target.setAttribute('data-visible', '');
-          // One-way: a card that has arrived stays put.
-          reveal.unobserve(entry.target);
-        }
-      },
-      // Waits until the card is a little way into the viewport rather than
-      // firing the moment its first pixel appears.
-      { rootMargin: '0px 0px -10% 0px', threshold: 0.2 }
+    // Where each card sits in the document, so it can be put back when the
+    // layout crosses the breakpoint.
+    const home = new Map(
+      cards.map((card) => [card, { parent: card.parentNode!, next: card.nextSibling }])
     );
 
-    for (const card of cards) reveal.observe(card);
+    /** The image this card belongs to: the nearest one in its own section. */
+    const imageFor = (card: HTMLElement): HTMLElement | null => {
+      for (const dir of ['nextElementSibling', 'previousElementSibling'] as const) {
+        let node = card[dir] as HTMLElement | null;
+        while (node) {
+          // Never pair across a section boundary.
+          if (node.tagName === 'H2') break;
+          if (node.querySelector('img')) return node;
+          node = node[dir] as HTMLElement | null;
+        }
+      }
+      return null;
+    };
+
+    const wide = matchMedia('(min-width: 1280px)');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+    let observer: IntersectionObserver | null = null;
+    let openHost: HTMLElement | null = null;
+    const hosts: HTMLElement[] = [];
+
+    const closeOpen = () => {
+      if (!openHost) return;
+      openHost.removeAttribute('data-cards-open');
+      openHost.setAttribute('aria-expanded', 'false');
+      openHost = null;
+    };
+
+    const teardown = () => {
+      observer?.disconnect();
+      observer = null;
+      closeOpen();
+
+      for (const host of hosts.splice(0)) {
+        host.classList.remove('has-cards');
+        host.removeAttribute('role');
+        host.removeAttribute('tabindex');
+        host.removeAttribute('aria-expanded');
+        host.removeAttribute('aria-label');
+        host.querySelector('.card-overlay')?.remove();
+      }
+
+      // Back to their document positions before the other mode takes over.
+      for (const card of cards) {
+        const spot = home.get(card)!;
+        spot.parent.insertBefore(card, spot.next);
+        card.removeAttribute('data-visible');
+      }
+    };
+
+    const setupMargin = () => {
+      // A band across the middle of the viewport: a card shows while its
+      // passage is in the centre of vision, and hides once it has passed.
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            entry.target.toggleAttribute('data-visible', entry.isIntersecting);
+          }
+        },
+        { rootMargin: '-42% 0px -42% 0px', threshold: 0 }
+      );
+
+      for (const card of cards) observer.observe(card);
+    };
+
+    const setupOverlay = () => {
+      // Several cards can belong to one image, so group before building.
+      const grouped = new Map<HTMLElement, HTMLElement[]>();
+      for (const card of cards) {
+        const host = imageFor(card);
+        if (!host) continue;
+        grouped.set(host, [...(grouped.get(host) ?? []), card]);
+      }
+
+      for (const [host, group] of grouped) {
+        const overlay = document.createElement('div');
+        overlay.className = 'card-overlay';
+        for (const card of group) overlay.append(card);
+        host.append(overlay);
+
+        host.classList.add('has-cards');
+        host.setAttribute('role', 'button');
+        host.setAttribute('tabindex', '0');
+        host.setAttribute('aria-expanded', 'false');
+        host.setAttribute(
+          'aria-label',
+          group.length === 1
+            ? 'Show the psychology note for this image'
+            : `Show the ${group.length} psychology notes for this image`
+        );
+
+        const toggle = () => {
+          const isOpen = host.hasAttribute('data-cards-open');
+          closeOpen();
+          if (isOpen) return;
+          host.setAttribute('data-cards-open', '');
+          host.setAttribute('aria-expanded', 'true');
+          openHost = host;
+        };
+
+        host.addEventListener('click', toggle);
+        host.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          // Space would otherwise scroll the page.
+          event.preventDefault();
+          toggle();
+        });
+
+        hosts.push(host);
+      }
+    };
+
+    const apply = () => {
+      teardown();
+      if (wide.matches) setupMargin();
+      else setupOverlay();
+      // With reduced motion there is nothing to ease, so cards in the margin
+      // are simply shown rather than tied to scroll position.
+      if (wide.matches && still.matches) {
+        for (const card of cards) card.setAttribute('data-visible', '');
+        observer?.disconnect();
+        observer = null;
+      }
+    };
+
+    apply();
+    wide.addEventListener('change', apply);
+    addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeOpen();
+    });
   }
 
   // A looping autoplay is continuous motion, so a reduced-motion preference
